@@ -1,80 +1,130 @@
 package com.revenco.library.utils;
 
-public class XLog {
-    private static final boolean DEBUG = true;//BuildConfig.DEBUG;
+import android.os.Environment;
+import android.util.Log;
 
-    public static void v(String tag, String msg) {
-        if (DEBUG) {
-            android.util.Log.v(tag, msg);
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+/**
+ * Created by Administrator on 2016/11/9.
+ */
+public class XLog {
+    private static boolean isDebug = true;
+    /**
+     * 是否写入SDcard日志
+     */
+    private static boolean isWriteSDCardLog = true;
+
+    public static void d(String tag, String log) {
+        if (isDebug)
+            Log.d(tag, log);
+        if (isWriteSDCardLog)
+            writeLog2File(tag, log);
+    }
+
+    /**
+     * 文件全路径例如：/sdcard/_xlog/MainActivity_2016-12-29-20_log.txt
+     *
+     * @param tag tag拼接为文件名一部分
+     * @param log
+     */
+    public static void writeLog(String tag, String log) {
+        if (isDebug) {
+            Log.d(tag, log);
+        }
+        if (isWriteSDCardLog)
+            writeLog2File(tag, log);
+    }
+
+    public static void w(String tag, String log) {
+        if (isDebug) {
+            Log.w(tag, log);
+        }
+        if (isWriteSDCardLog)
+            writeLog2File(tag, log);
+    }
+
+    public static void i(String tag, String log) {
+        if (isDebug)
+            Log.i(tag, log);
+        if (isWriteSDCardLog)
+            writeLog2File(tag, log);
+    }
+
+    public static void v(String tag, String log) {
+        if (isDebug) {
+            Log.v(tag, log);
+        }
+        if (isWriteSDCardLog)
+            writeLog2File(tag, log);
+    }
+
+    public static void e(String tag, String log) {
+        if (isDebug) {
+            Log.e(tag, log);
+        }
+        if (isWriteSDCardLog)
+            writeLog2File(tag, log);
+    }
+
+    public static void e(Throwable e, String tag, String log) {
+        e.printStackTrace();
+        if (isDebug) {
+            Log.e(tag, log);
+        }
+        if (isWriteSDCardLog)
+            writeLog2File(tag, log);
+    }
+
+    public static void w(Throwable e, String tag, String log) {
+        e.printStackTrace();
+        if (isDebug) {
+            Log.w(tag, log);
+        }
+        if (isWriteSDCardLog)
+            writeLog2File(tag, log);
+    }
+
+    public static synchronized void writeLog2File(String tag, String text) {
+        String LOG_PATH = Environment.getExternalStorageDirectory() + "/_xlog/";
+        final String LOG_FILE_NAME = "_log.txt";
+        final SimpleDateFormat contentPrefix = new SimpleDateFormat("yyyy-MM-dd-HH HH:mm:ss.sss");
+        final SimpleDateFormat logFileName = new SimpleDateFormat("yyyy-MM-dd-HH");
+        Date date = new Date();
+        String fullPathName = LOG_PATH + logFileName.format(date).trim() + LOG_FILE_NAME;
+        String content = contentPrefix.format(date).trim() + "   " + tag + "   " + text + "\r\n";
+        try {
+            XFile.writeFile(fullPathName, content, true);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        //正对性统计 MainActivity 的日志
+        if (tag.equals("MainActivity")) {
+            fullPathName = LOG_PATH + "MainActivity_" + logFileName.format(date).trim() + LOG_FILE_NAME;
+            XFile.writeFile(fullPathName, content, true);
         }
     }
 
     /**
-     * @param msg 默认android.util.Log.d("TAG", msg);
+     * 文件全路径例如：/sdcard/_xlog/Statistics_2016-12-29_log.txt
+     * 统计信息
+     *
+     * @param tag
+     * @param text
      */
-    public static void d(String msg) {
-        if (DEBUG) {
-            android.util.Log.d("TAG", msg);
-        }
-    }
-
-    public static void v(String tag, String msg, Throwable tr) {
-        if (DEBUG) {
-            android.util.Log.v(tag, msg, tr);
-        }
-    }
-
-    public static void d(String tag, String msg) {
-        if (DEBUG) {
-            android.util.Log.d(tag, msg);
-        }
-    }
-
-    public static void d(String tag, String msg, Throwable tr) {
-        if (DEBUG) {
-            android.util.Log.d(tag, msg, tr);
-        }
-    }
-
-    public static void i(String tag, String msg) {
-        if (DEBUG) {
-            android.util.Log.i(tag, msg);
-        }
-    }
-
-    public static void i(String tag, String msg, Throwable tr) {
-        if (DEBUG) {
-            android.util.Log.i(tag, msg, tr);
-        }
-    }
-
-    public static void w(String tag, String msg) {
-        if (DEBUG) {
-            android.util.Log.w(tag, msg);
-        }
-    }
-
-    public static void w(String tag, String msg, Throwable tr) {
-        if (DEBUG) {
-            android.util.Log.w(tag, msg, tr);
-        }
-    }
-
-    public static void w(String tag, Throwable tr) {
-        if (DEBUG) {
-            android.util.Log.w(tag, tr);
-        }
-    }
-
-    public static void e(String tag, String msg) {
-        if (DEBUG) {
-            android.util.Log.e(tag, msg);
-        }
-    }
-
-    public static void e(String tag, String msg, Throwable tr) {
-        if (DEBUG) {
-            android.util.Log.e(tag, msg, tr);
+    public static void writeLog2FileWithName(String tag, String text) {
+        String LOG_PATH = Environment.getExternalStorageDirectory() + "/_xlog/";
+        final String LOG_FILE_NAME = "_log.txt";
+        final SimpleDateFormat contentPrefix = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:sss");
+        final SimpleDateFormat logFileName = new SimpleDateFormat("yyyy-MM-dd");
+        Date nowtime = new Date();
+        String fullPathName = LOG_PATH + "Statistics_" + logFileName.format(nowtime).trim() + LOG_FILE_NAME;
+        String content = contentPrefix.format(nowtime).trim() + "   " + tag + "   " + text + "\r\n";
+        try {
+            XFile.writeFile(fullPathName, content, true);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }
