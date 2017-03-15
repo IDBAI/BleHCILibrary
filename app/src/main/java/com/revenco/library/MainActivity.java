@@ -8,8 +8,10 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.revenco.library.Bean.AppConnectBean;
+import com.revenco.library.command.FlowControl;
 import com.revenco.library.core.DealHCIEvent;
 import com.revenco.library.core.PeripharalManager;
 import com.revenco.library.utils.ConvertUtil;
@@ -73,6 +75,12 @@ public class MainActivity extends Activity {
                         attrValues.scrollTo(0, 1000);
                         XLog.d("GOOD", textstr);
                         break;
+                    case FlowControl.action_disPlAY_beacon_status:
+                        //测试显示UI提示
+                        TextView textView = (TextView) findViewById(R.id.beanconStatus);
+                        String status = intent.getStringExtra("ACTION");
+                        textView.setText(status);
+                        break;
                 }
             }
         };
@@ -83,6 +91,8 @@ public class MainActivity extends Activity {
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(DealHCIEvent.ACTION_APP_CONNECT_STATUS);
         intentFilter.addAction(DealHCIEvent.ACTION_REVEIVE_ATTRIBUTE_VALUES);
+        //测试UI显示
+        intentFilter.addAction(FlowControl.action_disPlAY_beacon_status);
         return intentFilter;
     }
 

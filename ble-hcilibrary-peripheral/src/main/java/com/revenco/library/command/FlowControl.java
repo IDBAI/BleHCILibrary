@@ -40,7 +40,7 @@ public class FlowControl extends BroadcastReceiver {
     public static final String ACTION_GATT_ADD_CHAR_SUCCESS = "com.revenco.blehcilibrary.command.ACTION_GATT_ADD_CHAR_SUCCESS";
     public static final String ACTION_ACI_GATT_ADD_CHAR_DESC_SUCCESS = "com.revenco.blehcilibrary.command.ACTION_ACI_GATT_ADD_CHAR_DESC_SUCCESS";
     public static final String ACTION_SET_SCAN_RESPONSE_DATA_SUCCESS = "com.revenco.blehcilibrary.command.ACTION_SET_SCAN_RESPONSE_DATA_SUCCESS";
-    public static final String ACTION_ACI_GAP_SET_DISCOVERABLE_SUCCESS = "com.revenco.blehcilibrary.command.ACI_GAP_SET_DISCOVERABLE";
+    public static final String ACTION_ACI_GAP_SET_DISCOVERABLE_SUCCESS = "com.revenco.blehcilibrary.command.ACTION_ACI_GAP_SET_DISCOVERABLE_SUCCESS";
     public static final String ACTION_ACI_GAP_UPDATE_ADV_DATA_SUCCESS = "com.revenco.blehcilibrary.command.ACTION_ACI_GAP_UPDATE_ADV_DATA_SUCCESS";
     public static final String ACTION_HCI_DISCONNECT = "com.revenco.blehcilibrary.command.ACTION_HCI_DISCONNECT";
     /**
@@ -69,6 +69,10 @@ public class FlowControl extends BroadcastReceiver {
     private static final byte WRITE_PROPERTIES = CharacteristicProperty.PROPERTY_WRITE | CharacteristicProperty.PROPERTY_WRITE_NO_RESPONSE;
     private static final byte NOFITY_PROPERTIES = CharacteristicProperty.PROPERTY_NOTIFY;
     /**
+     * 测试使用
+     */
+    public static final String action_disPlAY_beacon_status = "ACTION_DISPlAY_BEACON_STATUS";
+    /**
      * 当前已经配置的进度
      */
     public static volatile ConfigProcess currentHasConfig = ConfigProcess.config_none;
@@ -76,6 +80,7 @@ public class FlowControl extends BroadcastReceiver {
      * 特征值实体集合
      */
     private static SparseArray<CharBean> charBeanSparseArray = new SparseArray<>(CHAR_SET_SIZE);
+    ;
 
     public static SparseArray<CharBean> getCharBeanSparseArray() {
         return charBeanSparseArray;
@@ -174,7 +179,6 @@ public class FlowControl extends BroadcastReceiver {
             case ACTION_ACI_GAP_SET_DISCOVERABLE_SUCCESS://12 开启广播成功
                 XLog.d("TTT", "12 开启广播成功");
                 XLog.d(TAG, "12 开启广播成功");
-                XLog.d(TAG, "set PeripheralService.isIniting = false;");
                 PeripheralService.isIniting = false;
                 break;
 //                不使用
@@ -218,6 +222,9 @@ public class FlowControl extends BroadcastReceiver {
                 context.sendBroadcast(new Intent(FlowControl.ACTION_HCI_DISCONNECT));
                 break;
         }
+        Intent intent1 = new Intent(action_disPlAY_beacon_status);
+        intent1.putExtra("ACTION", intent.getAction());
+        context.sendBroadcast(intent1);
     }
 
     private void removeResetHwHandler() {

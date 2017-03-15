@@ -18,6 +18,7 @@
         android:layout_marginLeft="11dp"
         android:layout_marginStart="11dp"
         android:text="HWReset"/>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -53,23 +54,32 @@
         android:id="@+id/Test"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
         android:layout_marginLeft="116dp"
         android:layout_marginStart="116dp"
-        android:text="Test notify"
-        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@+id/HWReset"
         android:layout_toRightOf="@+id/HWReset"
-        android:layout_toEndOf="@+id/HWReset"/>
+        android:text="Test notify"/>
+
+
+    <TextView
+        android:id="@+id/beanconStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:textColor="@color/colorPrimary"
+        android:textSize="20sp"
+        tools:text="广播成功"/>
 
     <Button
         android:id="@+id/clear"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
         android:layout_marginLeft="40dp"
         android:layout_marginStart="40dp"
-        android:text="清屏"
-        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@+id/Test"
         android:layout_toRightOf="@+id/Test"
-        android:layout_toEndOf="@+id/Test"/>
-
+        android:text="清屏"/>
 
 </RelativeLayout>
