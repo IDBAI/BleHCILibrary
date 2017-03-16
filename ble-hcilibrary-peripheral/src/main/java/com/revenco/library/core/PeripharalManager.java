@@ -112,7 +112,7 @@ public class PeripharalManager {
 
     private IntentFilter getFlowControlFilter() {
         IntentFilter filter = new IntentFilter();
-        filter.addAction(FlowControl.ACTION_OPEN_SUCCESS);
+//        filter.addAction(FlowControl.ACTION_OPEN_SUCCESS);
         filter.addAction(FlowControl.ACTION_HWRESET_SUCCESS);
         filter.addAction(FlowControl.ACTION_CONFIG_MODE_SUCCESS);
         filter.addAction(FlowControl.ACTION_CONFIG_PUBADDR_SUCCESS);

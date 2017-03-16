@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.revenco.library.command.AciCommandConfig;
-import com.revenco.library.command.AciHciCommand;
 import com.revenco.library.command.FlowControl;
 import com.revenco.library.utils.XLog;
 
@@ -77,6 +76,9 @@ public class DealCommandResult {
             if (status == AciCommandConfig.EVENT_BLE_STATUS_SUCCESS) {
                 XLog.d(TAG, "* start success!");
                 sendBroadCast(context, FlowControl.ACTION_HWRESET_SUCCESS);
+            } else {
+                XLog.e(TAG, "reset error,reset HW again!!");
+                sendBroadCast(context, FlowControl.ACTION_RESETHW_INIT);
             }
         }
     }
@@ -98,30 +100,33 @@ public class DealCommandResult {
                 XLog.d(TAG, "Firmware started properly!");
                 sendBroadCast(context, FlowControl.ACTION_HWRESET_SUCCESS);
                 break;
+            default:
+                XLog.e(TAG, "unknow error,reset HW again!!");
+                sendBroadCast(context, FlowControl.ACTION_RESETHW_INIT);
+                break;
         }
     }
-
     /**
      * 处理open aciton的结果
      *
      * @param currentOpCode {0x01,0x10};
      * @param paramContent  [0x01,0x01,0x10,0x00,0x06,0x07,0x31,0x06,0x30,0x00,0x10,0x00]
      */
-    public static void dealOpenResult(Context context, byte[] currentOpCode, byte[] paramContent) {
-        XLog.d(TAG, "dealOpenResult() called with: context = [" + context + "], currentOpCode = [" + currentOpCode + "], paramContent = [" + paramContent + "]");
-        byte[] opcode = new byte[2];
-        System.arraycopy(paramContent, 1, opcode, 0, 2);//第0位为：Num_HCI_Command_Packets
-        if (Arrays.equals(opcode, currentOpCode)) {
-            byte status = paramContent[3];
-            if (status == AciCommandConfig.EVENT_BLE_STATUS_SUCCESS) {
-                XLog.d(TAG, "* open success!");
-                sendBroadCast(context, FlowControl.ACTION_OPEN_SUCCESS);
-            } else if (status == AciCommandConfig.ERR_INVALID_HCI_CMD_PARAMS) {
-                XLog.e(TAG, "* open failed,ERR_INVALID_HCI_CMD_PARAMS,i will HwReset");
-                AciHciCommand.bleHwReset(PeripharalManager.getInstance().getListenTask());
-            }
-        }
-    }
+//    public static void dealOpenResult(Context context, byte[] currentOpCode, byte[] paramContent) {
+//        XLog.d(TAG, "dealOpenResult() called with: context = [" + context + "], currentOpCode = [" + currentOpCode + "], paramContent = [" + paramContent + "]");
+//        byte[] opcode = new byte[2];
+//        System.arraycopy(paramContent, 1, opcode, 0, 2);//第0位为：Num_HCI_Command_Packets
+//        if (Arrays.equals(opcode, currentOpCode)) {
+//            byte status = paramContent[3];
+//            if (status == AciCommandConfig.EVENT_BLE_STATUS_SUCCESS) {
+//                XLog.d(TAG, "* open success!");
+//                sendBroadCast(context, FlowControl.ACTION_OPEN_SUCCESS);
+//            } else if (status == AciCommandConfig.ERR_INVALID_HCI_CMD_PARAMS) {
+//                XLog.e(TAG, "* open failed,ERR_INVALID_HCI_CMD_PARAMS,i will HwReset");
+//                AciHciCommand.bleHwReset(PeripharalManager.getInstance().getListenTask());
+//            }
+//        }
+//    }
 
     /**
      * [0x04,0x0E,0x04,0x01,0x0C,0xFC,0x00]
@@ -138,19 +143,28 @@ public class DealCommandResult {
         System.arraycopy(paramContent, 1, opcode, 0, 2);//第0位为：Num_HCI_Command_Packets
         if (Arrays.equals(opcode, currentOpCode)) {
             byte status = paramContent[3];
-            if (status == AciCommandConfig.EVENT_BLE_STATUS_SUCCESS) {
-                if (FlowControl.currentHasConfig == FlowControl.ConfigProcess.config_none) {
-                    XLog.d(TAG, "* config mode  success!");
-                    sendBroadCast(context, FlowControl.ACTION_CONFIG_MODE_SUCCESS);
-                } else if (FlowControl.currentHasConfig == FlowControl.ConfigProcess.config_mode) {
-                    XLog.d(TAG, "* config public address  success!");
-                    sendBroadCast(context, FlowControl.ACTION_CONFIG_PUBADDR_SUCCESS);
-                }
-            } else if (status == AciCommandConfig.ERR_INVALID_HCI_CMD_PARAMS) {
-                XLog.e(TAG, "ERR_INVALID_HCI_CMD_PARAMS!!!");
-                context.sendBroadcast(new Intent(FlowControl.ACTION_RESETHW_INIT));
-            } else {
-                XLog.e(TAG, "error,please check it!");
+            boolean isOtherError = false;
+            switch (status) {
+                case AciCommandConfig.EVENT_BLE_STATUS_SUCCESS:
+                    if (FlowControl.currentHasConfig == FlowControl.ConfigProcess.config_none) {
+                        XLog.d(TAG, "* config mode  success!");
+                        sendBroadCast(context, FlowControl.ACTION_CONFIG_MODE_SUCCESS);
+                    } else if (FlowControl.currentHasConfig == FlowControl.ConfigProcess.config_mode) {
+                        XLog.d(TAG, "* config public address  success!");
+                        sendBroadCast(context, FlowControl.ACTION_CONFIG_PUBADDR_SUCCESS);
+                    }
+                    break;
+                case AciCommandConfig.ERR_INVALID_HCI_CMD_PARAMS:
+                    XLog.e(TAG, "ERR_INVALID_HCI_CMD_PARAMS!!!");
+                    isOtherError = true;
+                    break;
+                default:
+                    XLog.e(TAG, "error,please check it!");
+                    isOtherError = true;
+                    break;
+            }
+            if (isOtherError) {
+                XLog.e(TAG, "error!reset HW again!");
                 context.sendBroadcast(new Intent(FlowControl.ACTION_RESETHW_INIT));
             }
         }
@@ -170,6 +184,9 @@ public class DealCommandResult {
             if (status == AciCommandConfig.EVENT_BLE_STATUS_SUCCESS) {
                 XLog.d(TAG, "* gatt init success!");
                 sendBroadCast(context, FlowControl.ACTION_GATT_INIT_SUCCESS);
+            } else {
+                XLog.e(TAG, "gatt init failed, reset HW again!");
+                sendBroadCast(context, FlowControl.ACTION_RESETHW_INIT);
             }
         }
     }
@@ -197,6 +214,9 @@ public class DealCommandResult {
                 System.arraycopy(paramContent, 8, Appearance_Char_Handle, 0, 2);
                 //
                 sendBroadCastWithServiceAndDev(context, Service_Handle, Dev_Name_Char_Handle, FlowControl.ACTION_GAP_INIT_SUCCESS);
+            } else {
+                XLog.e(TAG, "gap init failed, reset HW again!");
+                sendBroadCast(context, FlowControl.ACTION_RESETHW_INIT);
             }
         }
     }
@@ -217,6 +237,10 @@ public class DealCommandResult {
             if (status == AciCommandConfig.EVENT_BLE_STATUS_SUCCESS) {
                 XLog.d(TAG, "* gatt update char val success!----notify success!");
                 sendBroadCast(context, FlowControl.ACTION_GATT_UPDATE_CHAR_VAL_SUCCESS);
+            } else {
+                XLog.e(TAG, "* gatt update char val failed!----notify failed!");
+                XLog.e(TAG, "reset HW again!");
+                sendBroadCast(context, FlowControl.ACTION_RESETHW_INIT);
             }
         }
     }
@@ -230,6 +254,9 @@ public class DealCommandResult {
             if (status == AciCommandConfig.EVENT_BLE_STATUS_SUCCESS) {
                 XLog.d(TAG, "* set txt Power  success!");
                 sendBroadCast(context, FlowControl.ACTION_SET_TX_POWER_LEVEL_SUCCESS);
+            } else {
+                XLog.e(TAG, "set txt Power error, reset HW again!!");
+                sendBroadCast(context, FlowControl.ACTION_RESETHW_INIT);
             }
         }
     }
@@ -254,6 +281,9 @@ public class DealCommandResult {
                 //拷贝Handler
                 System.arraycopy(paramContent, 4, Service_Handle, 0, 2);
                 sendBroadCastWithService(context, Service_Handle, FlowControl.ACTION_GATT_ADD_SERVICE_SUCCESS);
+            } else {
+                XLog.e(TAG, "gatt add service failed,reset HW again!");
+                sendBroadCast(context, FlowControl.ACTION_RESETHW_INIT);
             }
         }
     }
@@ -308,10 +338,14 @@ public class DealCommandResult {
                     XLog.e(TAG, "STATUS_ADD_CHAR_Character_Already_Exists");
                     isOtherError = true;
                     break;
+                default:
+                    XLog.e(TAG, "error,please check it!");
+                    isOtherError = true;
+                    break;
             }
             if (isOtherError) {
                 // TODO: 2017/3/15  添加特征值遇到错误，强制 resetHW
-                XLog.e(TAG, "// TODO: 2017/3/15  添加特征值遇到错误，强制 resetHW");
+                XLog.e(TAG, "// TODO: 2017/3/15  添加特征值遇到错误，reset HW again!");
                 context.sendBroadcast(new Intent(FlowControl.ACTION_RESETHW_INIT));
             }
         }
@@ -333,6 +367,9 @@ public class DealCommandResult {
             if (status == AciCommandConfig.EVENT_BLE_STATUS_SUCCESS) {
                 XLog.d(TAG, "* set scan response data  success!");
                 sendBroadCast(context, FlowControl.ACTION_SET_SCAN_RESPONSE_DATA_SUCCESS);
+            } else {
+                XLog.e(TAG, "set scan response data failed, reset HW again!");
+                sendBroadCast(context, FlowControl.ACTION_RESETHW_INIT);
             }
         }
     }
@@ -348,6 +385,7 @@ public class DealCommandResult {
         System.arraycopy(paramContent, 1, opcode, 0, 2);//第0位为：Num_HCI_Command_Packets
         if (Arrays.equals(opcode, currentOpCode)) {
             byte status = paramContent[3];
+            boolean isOtherError = false;
 //            0x00: Success
 //            0x42: Invalid parameter
 //            0x0C: Command disallowed
@@ -359,16 +397,24 @@ public class DealCommandResult {
                     break;
                 case (byte) 0x42:
                     XLog.e(TAG, "Invalid parameter");
-                    context.sendBroadcast(new Intent(FlowControl.ACTION_RESETHW_INIT));
+                    isOtherError = true;
                     break;
                 case (byte) 0x0C:
                     XLog.e(TAG, "Command disallowed");
-                    context.sendBroadcast(new Intent(FlowControl.ACTION_RESETHW_INIT));
+                    isOtherError = true;
                     break;
                 case (byte) 0x11:
                     XLog.e(TAG, "Unsupported feature");
-                    context.sendBroadcast(new Intent(FlowControl.ACTION_RESETHW_INIT));
+                    isOtherError = true;
                     break;
+                default:
+                    XLog.e(TAG, "error,please check it!");
+                    isOtherError = true;
+                    break;
+            }
+            if (isOtherError) {
+                XLog.e(TAG, "* aci gap set discoverable failed,reset HW again!");
+                context.sendBroadcast(new Intent(FlowControl.ACTION_RESETHW_INIT));
             }
         }
     }
@@ -390,6 +436,7 @@ public class DealCommandResult {
         System.arraycopy(paramContent, 1, opcode, 0, 2);//第0位为：Num_HCI_Command_Packets
         if (Arrays.equals(opcode, currentOpCode)) {
             byte status = paramContent[3];
+            boolean isOtherError = false;
             switch (status) {
                 case AciCommandConfig.STATUS_Success:
                     XLog.d(TAG, "* aci gatt add char desc success!");
@@ -400,25 +447,39 @@ public class DealCommandResult {
                     break;
                 case AciCommandConfig.STATUS_Error:
                     XLog.e(TAG, "STATUS_Error");
+                    isOtherError = true;
                     break;
                 case AciCommandConfig.STATUS_OOM:
                     XLog.e(TAG, "STATUS_OOM");
+                    isOtherError = true;
                     break;
                 case AciCommandConfig.STATUS_InValid_Handle:
                     XLog.e(TAG, "STATUS_InValid_Handle");
+                    isOtherError = true;
                     break;
                 case AciCommandConfig.STATUS_InValid_Param:
                     XLog.e(TAG, "STATUS_InValid_Param");
+                    isOtherError = true;
                     break;
                 case AciCommandConfig.STATUS_OOH:
                     XLog.e(TAG, "STATUS_OOH");
+                    isOtherError = true;
                     break;
                 case AciCommandConfig.STATUS_InValid_Operation:
                     XLog.e(TAG, "STATUS_InValid_Operation");
+                    isOtherError = true;
                     break;
                 case AciCommandConfig.STATUS_Insufficient_resources:
                     XLog.e(TAG, "STATUS_Insufficient_resources");
+                    isOtherError = true;
                     break;
+                default:
+                    isOtherError = true;
+                    break;
+            }
+            if (isOtherError) {
+                XLog.e(TAG, "* aci gatt add char desc failed,reset HW again!");
+                sendBroadCast(context, FlowControl.ACTION_RESETHW_INIT);
             }
         }
     }

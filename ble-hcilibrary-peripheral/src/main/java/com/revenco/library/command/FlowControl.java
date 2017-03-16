@@ -28,7 +28,7 @@ import static com.revenco.library.command.FlowControl.ConfigProcess.config_publi
  * <p>CLASS_VERSION : 1.0.0</p>
  */
 public class FlowControl extends BroadcastReceiver {
-    public static final String ACTION_OPEN_SUCCESS = "com.revenco.blehcilibrary.command.ACTION_OPEN_SUCCESS";
+    //    public static final String ACTION_OPEN_SUCCESS = "com.revenco.blehcilibrary.command.ACTION_OPEN_SUCCESS";
     public static final String ACTION_HWRESET_SUCCESS = "com.revenco.blehcilibrary.command.ACTION_HWRESET_SUCCESS";
     public static final String ACTION_CONFIG_MODE_SUCCESS = "com.revenco.blehcilibrary.command.ACTION_CONFIG_MODE_SUCCESS";
     public static final String ACTION_CONFIG_PUBADDR_SUCCESS = "com.revenco.blehcilibrary.command.ACTION_CONFIG_PUBADDR_SUCCESS";
@@ -65,13 +65,13 @@ public class FlowControl extends BroadcastReceiver {
      * 特征值集合
      */
     public static final int CHAR_SET_SIZE = 8;
-    private static final String TAG = "FlowControl";
-    private static final byte WRITE_PROPERTIES = CharacteristicProperty.PROPERTY_WRITE | CharacteristicProperty.PROPERTY_WRITE_NO_RESPONSE;
-    private static final byte NOFITY_PROPERTIES = CharacteristicProperty.PROPERTY_NOTIFY;
     /**
      * 测试使用
      */
     public static final String action_disPlAY_beacon_status = "ACTION_DISPlAY_BEACON_STATUS";
+    private static final String TAG = "FlowControl";
+    private static final byte WRITE_PROPERTIES = CharacteristicProperty.PROPERTY_WRITE | CharacteristicProperty.PROPERTY_WRITE_NO_RESPONSE;
+    private static final byte NOFITY_PROPERTIES = CharacteristicProperty.PROPERTY_NOTIFY;
     /**
      * 当前已经配置的进度
      */
@@ -90,44 +90,44 @@ public class FlowControl extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         Bundle extras = null;
         switch (intent.getAction()) {
-            case ACTION_OPEN_SUCCESS://1 开启成功
-                XLog.d(TAG, "1 开启成功");
-                AciHciCommand.bleHwReset(PeripharalManager.getInstance().getListenTask());
-                currentHasConfig = ConfigProcess.config_none;
-                break;
+//            case ACTION_OPEN_SUCCESS://1 开启成功
+//                XLog.d(TAG, "1 开启成功");
+//                AciHciCommand.bleHwReset(PeripharalManager.getInstance().getListenTask());
+//                currentHasConfig = ConfigProcess.config_none;
+//                break;
             case ACTION_HWRESET_SUCCESS://2 reset 成功
-                XLog.d(TAG, "2 reset 成功");
+                XLog.d(TAG, "1 reset 成功");
                 AciHalCommand.writeConfig_ModeData(PeripharalManager.getInstance().getListenTask());
                 currentHasConfig = ConfigProcess.config_none;
                 break;
             //配置开始
             case ACTION_CONFIG_MODE_SUCCESS://3 config mode 成功
-                XLog.d(TAG, "3 config mode 成功");
+                XLog.d(TAG, "2 config mode 成功");
                 AciHalCommand.writeConfig_PublicAddrData(PeripharalManager.getInstance().getListenTask());
                 currentHasConfig = config_mode;
                 break;
             case ACTION_CONFIG_PUBADDR_SUCCESS://4 config address 成功
-                XLog.d(TAG, "4 config address 成功");
+                XLog.d(TAG, "3 config address 成功");
                 AciHalCommand.writeConfig_TxPowerData(PeripharalManager.getInstance().getListenTask());
                 currentHasConfig = config_publicAddress;
                 break;
             case ACTION_SET_TX_POWER_LEVEL_SUCCESS://5 set tx power 成功
-                XLog.d(TAG, "5 set tx power 成功");
+                XLog.d(TAG, "4 set tx power 成功");
                 //初始化GATT
                 AciGattCommand.bleGattInit(PeripharalManager.getInstance().getListenTask());
                 break;
             case ACTION_GATT_INIT_SUCCESS://6 gatt init 成功
-                XLog.d(TAG, "6 gatt init 成功");
+                XLog.d(TAG, "5 gatt init 成功");
                 //初始化GAP
                 AciGapCommand.aciGapInit(PeripharalManager.getInstance().getListenTask());
                 break;
             case ACTION_GAP_INIT_SUCCESS://7 gap init 成功
-                XLog.d(TAG, "7 gap init 成功");
+                XLog.d(TAG, "6 gap init 成功");
                 //TODO go on,--->you can add service and char
                 AciGattCommand.gattAddService(PeripharalManager.getInstance().getListenTask());
                 break;
             case ACTION_GATT_ADD_SERVICE_SUCCESS://9 add service 成功
-                XLog.d(TAG, "8 add service 成功");
+                XLog.d(TAG, "7 add service 成功");
                 extras = intent.getExtras();
                 if (extras != null) {
                     byte[] service_handle = extras.getByteArray(EXTRA_Service_Handle);
@@ -146,7 +146,7 @@ public class FlowControl extends BroadcastReceiver {
                     //再次添加
                     boolean isAddSuccess = startAddChar();
                     if (!isAddSuccess) {//全部已经被添加了 --> 添加失败,设置广播数据
-                        XLog.d(TAG, "9.0 add 8 个char 成功");
+                        XLog.d(TAG, "8.0 add 8 个char 成功");
                         //debug
 //                        printCharBean();
 //                        方案1，添加描述符
@@ -169,16 +169,16 @@ public class FlowControl extends BroadcastReceiver {
                     byte[] Char_desc_Handle = extras.getByteArray(EXTRA_Char_DESC_Handle);
                     XLog.d(TAG, "Char_desc_Handle = " + ConvertUtil.byte2HexStrWithSpace(Char_desc_Handle));
                 }
-                XLog.d(TAG, "10 为 notify 添加描述符成功");
+                XLog.d(TAG, "9 为 notify 添加描述符成功");
                 AciHciCommand.setBleScanResponseData(PeripharalManager.getInstance().getListenTask());
                 break;
             case ACTION_SET_SCAN_RESPONSE_DATA_SUCCESS://11 设置扫描响应数据成功
-                XLog.d(TAG, "11 设置扫描响应数据成功");
+                XLog.d(TAG, "10 设置扫描响应数据成功");
                 AciGapCommand.aciGapSetDiscoverable(PeripharalManager.getInstance().getListenTask());
                 break;
             case ACTION_ACI_GAP_SET_DISCOVERABLE_SUCCESS://12 开启广播成功
-                XLog.d("TTT", "12 开启广播成功");
-                XLog.d(TAG, "12 开启广播成功");
+                XLog.d("TTT", "11 开启广播成功");
+                XLog.d(TAG, "11 开启广播成功");
                 PeripheralService.isIniting = false;
                 break;
 //                不使用
@@ -188,19 +188,19 @@ public class FlowControl extends BroadcastReceiver {
 //                XLog.d(TAG, "13 更新广播数据成功");
 //                break;
             case ACTION_HCI_DISCONNECT:
-                removeResetHwHandler();
+                removeResetHwTimer();
                 XLog.d(TAG, "准备断开连接");
                 AciHciCommand.hciDisconnect(PeripharalManager.getInstance().getListenTask(),
                         PeripharalManager.getInstance().getAppEventReceive().getConnection_handle());
                 break;
             case ACTION_ENABLE_ADVERTISING:
-                removeResetHwHandler();
+                removeResetHwTimer();
                 XLog.d(TAG, "aciGapSetDiscoverable -->enable 广播！");
                 AciGapCommand.aciGapSetDiscoverable(PeripharalManager.getInstance().getListenTask());
                 break;
             case ACTION_RESETHW_INIT:
-                removeResetHwHandler();
-                XLog.d(TAG, "bleHwReset -->复位广播！");
+                removeResetHwTimer();
+                XLog.d(TAG, "bleHwReset -->reset 广播！");
                 AciHciCommand.bleHwReset(PeripharalManager.getInstance().getListenTask());
                 break;
             case ACTION_VERIFY_CERTIFICATE_RESULT:
@@ -214,8 +214,6 @@ public class FlowControl extends BroadcastReceiver {
                 }
                 break;
             case ACTION_GATT_UPDATE_CHAR_VAL_SUCCESS://8 gatt update char val 成功
-//                XLog.d("TTT", "通知开门结果成功--> TODO 重启广播");
-//                XLog.d(TAG, "通知开门结果成功--> TODO 重启广播");
 //                //TODO 重启广播
 //                context.sendBroadcast(new Intent(FlowControl.ACTION_ENABLE_ADVERTISING));
                 XLog.d(TAG, "通知开门结果成功--> 断开连接");
@@ -227,8 +225,8 @@ public class FlowControl extends BroadcastReceiver {
         context.sendBroadcast(intent1);
     }
 
-    private void removeResetHwHandler() {
-        XLog.d(TAG, "安全移除计时");
+    private void removeResetHwTimer() {
+        XLog.d(TAG, "removeResetHwTimer() called");
         PeripharalManager.getInstance().getAppEventReceive().mhandler.removeMessages(RESET_HW);
     }
 

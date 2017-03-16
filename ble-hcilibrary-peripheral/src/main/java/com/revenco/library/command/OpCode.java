@@ -9,7 +9,7 @@ package com.revenco.library.command;
  */
 public class OpCode {
     //open
-    public static final byte[] open_command_opCode = {0x01,0x10};
+//    public static final byte[] open_command_opCode = {0x01,0x10};
 
     public static final byte[] HCI_Disconnect_opCode = {0x06,0x04};
 

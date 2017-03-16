@@ -380,55 +380,56 @@ public class PeripheralService extends Service {
         XLog.d(TAG, "commandCompleteEvent() called with");
         XLog.d(TAG, "currentOpCode : " + ConvertUtil.byte2HexStrWithSpace(currentOpCode));
         XLog.d(TAG, "context : " + ConvertUtil.byte2HexStrWithSpace(paramContent));
-        //1、open
-        if (Arrays.equals(currentOpCode, OpCode.open_command_opCode)) {
-            DealCommandResult.dealOpenResult(getApplicationContext(), currentOpCode, paramContent);
-        }
-        //2、start
-        else if (Arrays.equals(currentOpCode, OpCode.hwReset_command_opCode)) {
+//        //1、open
+//        if (Arrays.equals(currentOpCode, OpCode.open_command_opCode)) {
+//            DealCommandResult.dealOpenResult(getApplicationContext(), currentOpCode, paramContent);
+//        }
+        //1、reset
+//        else
+        if (Arrays.equals(currentOpCode, OpCode.hwReset_command_opCode)) {
             DealCommandResult.dealHWResetResult(getApplicationContext(), currentOpCode, paramContent);
         }
-        //3、config
+        //2、config
         else if (Arrays.equals(currentOpCode, OpCode.ACI_HAL_WRITE_CONFIG_DATA_opCode)) {
             DealCommandResult.dealConfigDataResult(getApplicationContext(), currentOpCode, paramContent);
         }
-        //4、set tx power
+        //3、set tx power
         else if (Arrays.equals(currentOpCode, OpCode.ACI_HAL_SET_TX_POWER_LEVEL_opCode)) {
             DealCommandResult.dealSetTxPowerResult(getApplicationContext(), currentOpCode, paramContent);
         }
-        //5、gatt init
+        //4、gatt init
         else if (Arrays.equals(currentOpCode, OpCode.ACI_GATT_INIT_opCode)) {
             DealCommandResult.dealGattInitResult(getApplicationContext(), currentOpCode, paramContent);
         }
-        //6、gap init
+        //5、gap init
         else if (Arrays.equals(currentOpCode, OpCode.ACI_GAP_INIT_opCode)) {
             DealCommandResult.dealGapInitResult(getApplicationContext(), currentOpCode, paramContent);
         }
-        //7、gatt add service
+        //6、gatt add service
         else if (Arrays.equals(currentOpCode, OpCode.ACI_GATT_ADD_SERVICE_opCode)) {
             DealCommandResult.dealGattAddService(getApplicationContext(), currentOpCode, paramContent);
         }
-        //8、gatt add char
+        //7、gatt add char
         else if (Arrays.equals(currentOpCode, OpCode.ACI_GATT_ADD_CHAR_opCode)) {
             DealCommandResult.dealGattAddChar(getApplicationContext(), currentOpCode, paramContent);
         }
-        //9 添加描述符
+        //8 添加描述符
         else if (Arrays.equals(currentOpCode, OpCode.ACI_GATT_ADD_CHAR_DESC_opCode)) {
             DealCommandResult.dealAddCharDesc(getApplicationContext(), currentOpCode, paramContent);
         }
-        //10、设置广播数据
+        //9、设置广播数据
         else if (Arrays.equals(currentOpCode, OpCode.HCI_LE_SET_SCAN_RESPONSE_DATA_opCode)) {
             DealCommandResult.dealSetScanResponseData(getApplicationContext(), currentOpCode, paramContent);
         }
-        //11、ACI_Gap 开启广播
+        //10、ACI_Gap 开启广播
         else if (Arrays.equals(currentOpCode, OpCode.ACI_GAP_SET_DISCOVERABLE_opCode)) {
             DealCommandResult.dealAciGapDisCoverable(getApplicationContext(), currentOpCode, paramContent);
         }
-        //12 更新广播数据
+        //11 更新广播数据
         else if (Arrays.equals(currentOpCode, OpCode.ACI_GAP_UPDATE_ADV_DATA_opCode)) {
             DealCommandResult.dealAciGapUpdateADVData(getApplicationContext(), currentOpCode, paramContent);
         }
-        //13、notify
+        //12、notify
         else if (Arrays.equals(currentOpCode, OpCode.ACI_GATT_UPD_CHAR_VAL_opCode)) {
             DealCommandResult.dealGattUpdateCharValResult(getApplicationContext(), currentOpCode, paramContent);
         }
