@@ -1,8 +1,5 @@
 package com.revenco.library.command;
 
-import com.revenco.library.core.SerialPortListenTask;
-import com.revenco.library.utils.XLog;
-
 /**
  * <p>PROJECT : BleHCILibrary</p>
  * <p>COMPANY : wanzhong</p>
@@ -17,12 +14,12 @@ public class commonOption {
      *
      * @param portListenTask
      */
-    public static void open(SerialPortListenTask portListenTask) {
-        XLog.d(TAG, "open() called with: portListenTask = [" + portListenTask + "]");
-        byte[] data = new byte[4];
-        data[0] = AciCommandConfig.HCI_COMMAND_PKT;
-        System.arraycopy(OpCode.open_command_opCode, 0, data, 1, 2);
-        data[3] = 0x00;//length
-        portListenTask.sendData(OpCode.open_command_opCode, data);
-    }
+//    public static void open(SerialPortListenTask portListenTask) {
+//        XLog.d(TAG, "open() called with: portListenTask = [" + portListenTask + "]");
+//        byte[] data = new byte[4];
+//        data[0] = AciCommandConfig.HCI_COMMAND_PKT;
+//        System.arraycopy(OpCode.open_command_opCode, 0, data, 1, 2);
+//        data[3] = 0x00;//length
+//        portListenTask.sendData(OpCode.open_command_opCode, data);
+//    }
 }
