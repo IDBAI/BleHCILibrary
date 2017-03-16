@@ -152,6 +152,15 @@ public class PeripharalManager {
         }
         AciHciCommand.bleHwReset(listenTask);
     }
+
+    /**
+     * 通过manager 发送消息给 PeripheralService 周边服务
+     *
+     * @param what
+     */
+    public void sendMsg2PeripheralService(int what) {
+        sendMessage(null, what);
+    }
     //--------------------------command control----------------end
 
     private void sendMessage(Object listenTask, int what) {

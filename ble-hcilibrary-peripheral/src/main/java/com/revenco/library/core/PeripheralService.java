@@ -37,32 +37,35 @@ import static com.revenco.library.command.AciCommandConfig.LE__Event_code_Group;
  * <p> class_version: 1.0.0</p>
  */
 public class PeripheralService extends Service {
+    public static final int MSG_REMOVE_WAITING_TIMER = 1001;
     private static final int REVEICE_ID = 90;
     private static final String TAG = "PeripheralService";
     /**
      * 暴力等待重置广播事件，等待时间
      */
-    private static final long INIT_HW_TIME = 100L;
+    private static final long INIT_HW_TIME = 300L;
     private static final int INIT_HW_WHAT = 100;
     /**
      * 是否在init进行中
      */
     public static volatile boolean isIniting = false;
-    private Messenger messenger = new Messenger(new BLEHandler());
     private Handler mhandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
             switch (msg.what) {
                 case INIT_HW_WHAT:
                     isIniting = true;
-                    XLog.d(TAG, "等待超过 " + INIT_HW_TIME + " ms!");
-                    XLog.d(TAG, "暴力init 广播！");
+                    XLog.e(TAG, "等待超过 " + INIT_HW_TIME + " ms!");
+                    XLog.e("FlowControl", "等待超过 " + INIT_HW_TIME + " ms!");
+                    XLog.e(TAG, "reset HW !");
+                    XLog.e("FlowControl", "reset HW !");
                     getApplicationContext().sendBroadcast(new Intent(FlowControl.ACTION_RESETHW_INIT));
                     break;
             }
             return false;
         }
     });
+    private Messenger messenger = new Messenger(new BLEHandler());
     private SerialDataReceiver.SerialDataListener listner = new SerialDataReceiver.SerialDataListener() {
         /**
          * @param devices
@@ -86,6 +89,12 @@ public class PeripheralService extends Service {
     };
 
     public PeripheralService() {
+    }
+
+    public void removeWaitingResetHWTimer() {
+        XLog.d("FlowControl", "移除等待指令的reset HW 计时");
+        if (mhandler != null)
+            mhandler.removeMessages(INIT_HW_WHAT);
     }
 
     /**
@@ -191,15 +200,13 @@ public class PeripheralService extends Service {
         } else {
             switch (data[1]) {
                 case Disconnect_Complete:// 0x05:断开连接事件
+                    removeWaitingResetHWTimer();
                     if (isIniting) {
                         XLog.d(TAG, "isIniting = true!");
                         return;
                     }
-                    if (mhandler != null)
-                        mhandler.removeMessages(INIT_HW_WHAT);
                     DealHCIEvent.dealDisconnectEvent(data);
                     XLog.d(TAG, "0x05:断开连接事件-->//TODO ACTION_ENABLE_ADVERTISING");
-                    //TODO ACTION_ENABLE_ADVERTISING
                     sendBroadcast(new Intent(FlowControl.ACTION_ENABLE_ADVERTISING));
                     break;
                 case Command_Complete_Event:// 0x0E:指令完成回调
@@ -253,16 +260,14 @@ public class PeripheralService extends Service {
         //断开连接指令状态成功
         else if (Arrays.equals(opCode, OpCode.HCI_Disconnect_opCode)) {
             XLog.d(TAG, "* hci disconnect success! ");
-            // TODO: 2017/3/10
             XLog.d(TAG, "断开连接指令状态成功");
             XLog.d(TAG, "等待断开指令返回！");
-            if (mhandler != null)
-                mhandler.sendEmptyMessageDelayed(INIT_HW_WHAT, INIT_HW_TIME);
         } else {
-            // TODO: 2017/3/14 当做异常，暴力复位
             XLog.e(TAG, "// TODO: 2017/3/14 当做异常，暴力复位 ");
-            if (mhandler != null)
-                mhandler.sendEmptyMessageDelayed(INIT_HW_WHAT, INIT_HW_TIME);
+        }
+        if (mhandler != null) {
+            XLog.e("FlowControl", "开始" + INIT_HW_TIME + " ms reset HW 计时！");
+            mhandler.sendEmptyMessageDelayed(INIT_HW_WHAT, INIT_HW_TIME);
         }
     }
 
@@ -454,6 +459,9 @@ public class PeripheralService extends Service {
             super.handleMessage(msg);
             //TODO 接收manager 发过来的event
             switch (msg.what) {
+                case MSG_REMOVE_WAITING_TIMER:
+                    removeWaitingResetHWTimer();
+                    break;
             }
         }
     }

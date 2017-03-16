@@ -27,13 +27,13 @@ import java.util.Set;
  * <p>CLASS_VERSION : 1.0.0</p>
  */
 public class AppEventReceive extends BroadcastReceiver {
-    public static final int RESET_HW = 10001;
+    public static final int CONNECT_RESET_HW = 10001;
     private static final String TAG = "AppEventReceive";
     private Context context;
     public Handler mhandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
-            if (msg.what == RESET_HW) {
+            if (msg.what == CONNECT_RESET_HW) {
                 XLog.d(TAG, "时间到，断开连接！");
                 context.sendBroadcast(new Intent(FlowControl.ACTION_HCI_DISCONNECT));
             }
@@ -51,12 +51,11 @@ public class AppEventReceive extends BroadcastReceiver {
             Config.CHAR_UUID_WRITE_05,
             Config.CHAR_UUID_WRITE_06
     };
+    private byte[] connection_handle;
 
     public byte[] getConnection_handle() {
         return connection_handle;
     }
-
-    private byte[] connection_handle;
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -69,8 +68,8 @@ public class AppEventReceive extends BroadcastReceiver {
                 lastConnectAppmac = connectBean.appMac;
                 connection_handle = connectBean.Connection_Handle;
                 if (connectBean.status == AppConnectStatus.status_connected) {
-                    XLog.d(TAG, "开始5500ms计时！");
-                    mhandler.sendEmptyMessageDelayed(RESET_HW, 5500L);
+                    XLog.d(TAG, "开始" + Config.CONNECT_MAX_TIME + "ms计时！");
+                    mhandler.sendEmptyMessageDelayed(CONNECT_RESET_HW, Config.CONNECT_MAX_TIME);
                 }
                 break;
             case DealHCIEvent.ACTION_REVEIVE_ATTRIBUTE_VALUES:

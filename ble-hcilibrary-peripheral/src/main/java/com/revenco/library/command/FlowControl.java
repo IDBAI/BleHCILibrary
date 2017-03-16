@@ -16,7 +16,7 @@ import com.revenco.library.utils.Utils;
 import com.revenco.library.utils.XLog;
 import com.revenco.library.utils.byteUtils;
 
-import static com.revenco.library.Receive.AppEventReceive.RESET_HW;
+import static com.revenco.library.Receive.AppEventReceive.CONNECT_RESET_HW;
 import static com.revenco.library.command.FlowControl.ConfigProcess.config_mode;
 import static com.revenco.library.command.FlowControl.ConfigProcess.config_publicAddress;
 
@@ -177,6 +177,10 @@ public class FlowControl extends BroadcastReceiver {
                 AciGapCommand.aciGapSetDiscoverable(PeripharalManager.getInstance().getListenTask());
                 break;
             case ACTION_ACI_GAP_SET_DISCOVERABLE_SUCCESS://12 开启广播成功
+                //1、必须要移除app连接的计时
+                //2、必须要移除等待指令Reset的计时器
+                removeAppConnectTimer();
+                PeripharalManager.getInstance().sendMsg2PeripheralService(PeripheralService.MSG_REMOVE_WAITING_TIMER);
                 XLog.d("TTT", "11 开启广播成功");
                 XLog.d(TAG, "11 开启广播成功");
                 PeripheralService.isIniting = false;
@@ -188,18 +192,18 @@ public class FlowControl extends BroadcastReceiver {
 //                XLog.d(TAG, "13 更新广播数据成功");
 //                break;
             case ACTION_HCI_DISCONNECT:
-                removeResetHwTimer();
+                removeAppConnectTimer();
                 XLog.d(TAG, "准备断开连接");
                 AciHciCommand.hciDisconnect(PeripharalManager.getInstance().getListenTask(),
                         PeripharalManager.getInstance().getAppEventReceive().getConnection_handle());
                 break;
             case ACTION_ENABLE_ADVERTISING:
-                removeResetHwTimer();
+                removeAppConnectTimer();
                 XLog.d(TAG, "aciGapSetDiscoverable -->enable 广播！");
                 AciGapCommand.aciGapSetDiscoverable(PeripharalManager.getInstance().getListenTask());
                 break;
             case ACTION_RESETHW_INIT:
-                removeResetHwTimer();
+                removeAppConnectTimer();
                 XLog.d(TAG, "bleHwReset -->reset 广播！");
                 AciHciCommand.bleHwReset(PeripharalManager.getInstance().getListenTask());
                 break;
@@ -225,9 +229,9 @@ public class FlowControl extends BroadcastReceiver {
         context.sendBroadcast(intent1);
     }
 
-    private void removeResetHwTimer() {
-        XLog.d(TAG, "removeResetHwTimer() called");
-        PeripharalManager.getInstance().getAppEventReceive().mhandler.removeMessages(RESET_HW);
+    private void removeAppConnectTimer() {
+        XLog.d(TAG, "移除app连接的计时器");
+        PeripharalManager.getInstance().getAppEventReceive().mhandler.removeMessages(CONNECT_RESET_HW);
     }
 
     private void printCharBean() {

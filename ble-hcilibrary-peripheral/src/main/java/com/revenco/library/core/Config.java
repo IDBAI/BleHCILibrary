@@ -6,6 +6,10 @@ package com.revenco.library.core;
  */
 public class Config {
     /**
+     * 硬编码-连接的最大时长
+     */
+    public static final long CONNECT_MAX_TIME = 5500L;
+    /**
      * 串口BLE设备
      **/
     public static final String SERIAL_BLE_DEVICE = "/dev/ttyS2";

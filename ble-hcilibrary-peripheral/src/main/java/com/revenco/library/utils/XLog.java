@@ -14,7 +14,7 @@ public class XLog {
     /**
      * 是否写入SDcard日志
      */
-    private static boolean isWriteSDCardLog = true;
+    private static boolean isWriteSDCardLog = false;
 
     public static void d(String tag, String log) {
         if (isDebug)
