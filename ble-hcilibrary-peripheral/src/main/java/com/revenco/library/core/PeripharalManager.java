@@ -4,16 +4,13 @@ import android.app.Service;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
 
-import com.revenco.library.Receive.AppEventReceive;
 import com.revenco.library.command.AciHciCommand;
-import com.revenco.library.command.FlowControl;
 import com.revenco.library.utils.XLog;
 
 /**
@@ -47,17 +44,11 @@ public class PeripharalManager {
         }
     };
     private SerialPortListenTask listenTask;
-    private FlowControl flowControl;
-    private AppEventReceive appEventReceive;
 
     public static PeripharalManager getInstance() {
         if (instance == null)
             instance = new PeripharalManager();
         return instance;
-    }
-
-    public AppEventReceive getAppEventReceive() {
-        return appEventReceive;
     }
 
     public void setServiceUuid(byte[] serviceUuid) throws Exception {
@@ -80,66 +71,18 @@ public class PeripharalManager {
 
     public void init(Context context) {
         this.context = context;
-        //1启动服务
-        Intent service = new Intent(context, PeripheralService.class);
-        context.bindService(service, connect, Service.BIND_AUTO_CREATE);
-        //2启动串口监听
+        //1启动串口监听
         listenTask = new SerialPortListenTask(context);
         listenTask.execute();
-        //3、启动流程监控
-        flowControl = new FlowControl();
-        context.registerReceiver(flowControl, getFlowControlFilter());
-        //4、启动app数据接收解析器
-        appEventReceive = new AppEventReceive();
-        context.registerReceiver(appEventReceive, getappEventReceiveFilter());
-    }
-
-    public void onDestory(Context context) {
-        if (flowControl != null) {
-            context.unregisterReceiver(flowControl);
-        }
-        if (appEventReceive != null) {
-            context.unregisterReceiver(appEventReceive);
-        }
-    }
-
-    private IntentFilter getappEventReceiveFilter() {
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(DealHCIEvent.ACTION_APP_CONNECT_STATUS);
-        filter.addAction(DealHCIEvent.ACTION_REVEIVE_ATTRIBUTE_VALUES);
-        return filter;
-    }
-
-    private IntentFilter getFlowControlFilter() {
-        IntentFilter filter = new IntentFilter();
-//        filter.addAction(FlowControl.ACTION_OPEN_SUCCESS);
-        filter.addAction(FlowControl.ACTION_HWRESET_SUCCESS);
-        filter.addAction(FlowControl.ACTION_CONFIG_MODE_SUCCESS);
-        filter.addAction(FlowControl.ACTION_CONFIG_PUBADDR_SUCCESS);
-        filter.addAction(FlowControl.ACTION_SET_TX_POWER_LEVEL_SUCCESS);
-        filter.addAction(FlowControl.ACTION_GATT_INIT_SUCCESS);
-        filter.addAction(FlowControl.ACTION_GAP_INIT_SUCCESS);
-        filter.addAction(FlowControl.ACTION_GATT_UPDATE_CHAR_VAL_SUCCESS);
-        filter.addAction(FlowControl.ACTION_GATT_ADD_SERVICE_SUCCESS);
-        filter.addAction(FlowControl.ACTION_GATT_ADD_CHAR_SUCCESS);
-        filter.addAction(FlowControl.ACTION_ACI_GATT_ADD_CHAR_DESC_SUCCESS);
-        filter.addAction(FlowControl.ACTION_SET_SCAN_RESPONSE_DATA_SUCCESS);
-        filter.addAction(FlowControl.ACTION_ACI_GAP_SET_DISCOVERABLE_SUCCESS);
-        filter.addAction(FlowControl.ACTION_ACI_GAP_UPDATE_ADV_DATA_SUCCESS);
-        filter.addAction(FlowControl.ACTION_HCI_DISCONNECT);
-        filter.addAction(FlowControl.ACTION_ENABLE_ADVERTISING);
-        filter.addAction(FlowControl.ACTION_RESETHW_INIT);
-        filter.addAction(FlowControl.ACTION_VERIFY_CERTIFICATE_RESULT);
-        return filter;
+        //2启动服务,内部监听了串口数据
+        Intent service = new Intent(context, PeripheralService.class);
+        context.bindService(service, connect, Service.BIND_AUTO_CREATE);
     }
 
     //--------------------------command control----------------start
     public void testnotify() {
         XLog.d(TAG, "TODO 测试，发送 notify");
-        Intent intent = new Intent(FlowControl.ACTION_VERIFY_CERTIFICATE_RESULT);
-        intent.putExtra(FlowControl.EXTRA_VERIFY_STATUS, Config.CHAR_NOTIFY_STATUS_SUCCESS_VALUE);
-        intent.putExtra(FlowControl.EXTRA_VERIFY_REASON, Config.SUCCESS_REASON);
-        context.sendBroadcast(intent);
+        sendMsg2PeripheralService(PeripheralService.MSG_TEST_SEND_NOTIFY);
     }
 
     /**

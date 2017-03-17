@@ -1,4 +1,4 @@
-package com.revenco.library.core;
+package com.revenco.library.others;
 
 /**
  * Created by Administrator on 2017/2/27.

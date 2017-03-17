@@ -1,11 +1,12 @@
 package com.revenco.library.core;
 
-import android.content.Context;
-import android.content.Intent;
 import android.SerialPort;
+import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
 
+import com.revenco.library.interfaces.SerialPortStatusDataListener;
+import com.revenco.library.others.Config;
 import com.revenco.library.utils.ConvertUtil;
 import com.revenco.library.utils.XLog;
 
@@ -40,6 +41,7 @@ public class SerialPortListenTask extends android.os.AsyncTask<Void, byte[], Boo
     private SerialPort serialPort;
     private InputStream inStream;
     private Context context;
+    private SerialPortStatusDataListener dataListener;
     private OutputStream outStream;
     private byte[] lastOpCode;
     private byte[] currentOpCode;
@@ -174,7 +176,7 @@ public class SerialPortListenTask extends android.os.AsyncTask<Void, byte[], Boo
     }
 
     //串口发送数据
-    public void sendData(final byte[] opCode, final byte[] data) {
+    public synchronized void sendData(final byte[] opCode, final byte[] data) {
         //
         lastOpCode = currentOpCode;
         lastSendData = currentSendData;
@@ -199,12 +201,14 @@ public class SerialPortListenTask extends android.os.AsyncTask<Void, byte[], Boo
     }
 
     public void publicBleSerialStatus(int status) {
-        Intent intent = new Intent(ACTION_STATUS_CHANGE);
-        intent.putExtra(EXTRA_SERIAL_DEVICE, Config.SERIAL_BLE_DEVICE);
-        intent.putExtra(EXTRA_STATE, status);
-        context.sendBroadcast(intent);
+        if (dataListener != null) {
+            dataListener.onStatusChange(Config.SERIAL_BLE_DEVICE, status);
+        }
     }
 
+    /**
+     * @param data
+     */
     public void publicBleData(byte[] data) {
         XLog.d(TAG, "publicBleData() called with: data = [" + data + "]");
         if (mHandler != null) {
@@ -212,10 +216,11 @@ public class SerialPortListenTask extends android.os.AsyncTask<Void, byte[], Boo
             mHandler.removeMessages(TIMEOUT_MSG);
             timeouts = 0;
         }
-        Intent intent = new Intent(ACTION_RECEIVE_DATA);
-        intent.putExtra(EXTRA_SERIAL_DEVICE, Config.SERIAL_BLE_DEVICE);
-        intent.putExtra(EXTRA_DATA, data);
-        intent.putExtra(EXTRA_OPCODE, currentOpCode);
-        context.sendBroadcast(intent);
+        if (dataListener != null)
+            dataListener.onDataReceive(Config.SERIAL_BLE_DEVICE, currentOpCode, data);
+    }
+
+    public void setSerialPortDataListener(SerialPortStatusDataListener dataListener) {
+        this.dataListener = dataListener;
     }
 }

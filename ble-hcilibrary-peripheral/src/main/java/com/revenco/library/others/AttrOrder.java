@@ -1,4 +1,4 @@
-package com.revenco.library.core;
+package com.revenco.library.others;
 
 /**
  * <p>PROJECT : BleHCILibrary</p>

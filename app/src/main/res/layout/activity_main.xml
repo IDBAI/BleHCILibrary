@@ -48,6 +48,18 @@
             android:layout_weight="2"
             android:enabled="false"
             android:text="Name"/>
+
+        <EditText
+            android:id="@+id/resettime"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout_weight="0.5"
+            android:enabled="false"
+            android:text="Name"/>
     </LinearLayout>
 
     <Button

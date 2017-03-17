@@ -179,4 +179,41 @@ public class ExampleUnitTest {
             System.out.println("values = " + ConvertUtil.byte2HexStrWithSpace(values));
         }
     }
+    
+    @Test
+    public void test33(){
+        byte[] data = {0x04 , (byte) 0xFF,0x03 ,0x01 ,0x00 ,0x01 ,0x04 ,0x0E ,0x04 ,0x01 ,0x01 , (byte) 0xFD,0x00};
+
+        FindPackage(new byte[]{0x01, (byte) 0xFD},data);
+    }
+
+
+    private byte[] FindPackage(byte[] currentOpCode, byte[] data) {
+      System.out.println( "FindPackage() called with");
+      System.out.println( " currentOpCode = [" + ConvertUtil.byte2HexStrWithSpace(currentOpCode) + "]");
+      System.out.println( " data = [" + ConvertUtil.byte2HexStrWithSpace(data) + "]");
+        byte[] destbyte = null;
+        int start = 0;
+        int end = 0;
+        for (int i = 0; i < data.length; i++) {
+            if (data[i] == currentOpCode[0] && ((i + 1) < data.length) && data[i + 1] == currentOpCode[1]) {
+                //判断向前索引是否会越界
+                if ((i - 4) >= 0) {
+                    start = i;
+                    end = i + 1;
+                    break;
+                }
+            }
+        }
+        if ((end - start) == 1) {
+            //find
+            int paramlength = data[start - 2];
+            int totalLength = paramlength + 3;
+            destbyte = new byte[totalLength];
+            System.arraycopy(data, start - 4, destbyte, 0, totalLength);
+          System.out.println( "destbyte = [" + ConvertUtil.byte2HexStrWithSpace(destbyte) + "]");
+        }
+        return destbyte;
+    }
+    
 }

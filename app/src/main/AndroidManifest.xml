@@ -22,13 +22,7 @@
             android:enabled="true"
             android:exported="false">
         </service>
-        <receiver android:name="com.revenco.library.core.SerialDataReceiver"
-            >
-            <intent-filter>
-                <action android:name="COM.REVENCO.BLEHCILIBRARY.ACTION_STATUS_CHANGE"/>
-                <action android:name="COM.REVENCO.BLEHCILIBRARY.ACTION_RECEIVE_DATA"/>
-            </intent-filter>
-        </receiver>
+
     </application>
 
 </manifest>

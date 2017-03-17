@@ -1,6 +1,6 @@
 package com.revenco.library.Bean;
 
-import com.revenco.library.core.AppConnectStatus;
+import com.revenco.library.others.AppConnectStatus;
 import com.revenco.library.utils.ConvertUtil;
 
 import java.io.Serializable;
