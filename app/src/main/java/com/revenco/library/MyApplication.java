@@ -29,10 +29,9 @@ public class MyApplication extends Application {
     public void onCreate() {
         super.onCreate();
         try {
-            PeripharalManager.getInstance().init(getApplicationContext());
             PeripharalManager.getInstance().setBlePublicMacAddress(BLE_PUBLIC_MAC_ADDRESS);
             PeripharalManager.getInstance().setServiceUuid(SERVICE_UUID);
-            PeripharalManager.getInstance().start();
+            PeripharalManager.getInstance().start(getApplicationContext());
         } catch (Exception e) {
             e.printStackTrace();
         }

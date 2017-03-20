@@ -24,6 +24,8 @@ import com.revenco.library.utils.XLog;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MainActivity extends Activity {
     private static final String TAG = "MainActivity";
@@ -48,7 +50,7 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 try {
-                    PeripharalManager.getInstance().start();
+                    PeripharalManager.getInstance().testResetHW();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -128,11 +130,25 @@ public class MainActivity extends Activity {
             }
         };
         registerReceiver(receive, getIntentFilter());
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        resetBtn.performClick();
+                    }
+                });
+            }
+        }, new Date(), 5000L);
     }
 
     public IntentFilter getIntentFilter() {
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(PeripheralService.ACTON_FLOWCONTROL_STATUS);
+        intentFilter.addAction(PeripheralService.ACTION_REVEIVE_ATTRIBUTE_VALUES);
+        intentFilter.addAction(PeripheralService.ACTION_APP_CONNECT_STATUS);
         return intentFilter;
     }
 

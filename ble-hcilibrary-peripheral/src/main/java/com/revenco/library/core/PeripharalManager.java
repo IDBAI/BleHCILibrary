@@ -32,10 +32,13 @@ public class PeripharalManager {
     public byte[] SERVICE_UUID;
     private Context context;
     private Messenger messenger;
+    private SerialPortListenTask listenTask;
     ServiceConnection connect = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
+            //3 启动串口监听
             messenger = new Messenger(service);
+            listenTask.execute();
         }
 
         @Override
@@ -43,7 +46,6 @@ public class PeripharalManager {
             messenger = null;
         }
     };
-    private SerialPortListenTask listenTask;
 
     public static PeripharalManager getInstance() {
         if (instance == null)
@@ -69,31 +71,30 @@ public class PeripharalManager {
         return listenTask;
     }
 
-    public void init(Context context) {
+    public void start(Context context) {
         this.context = context;
-        //1启动串口监听
+        //1初始化串口监听
         listenTask = new SerialPortListenTask(context);
-        listenTask.execute();
         //2启动服务,内部监听了串口数据
         Intent service = new Intent(context, PeripheralService.class);
         context.bindService(service, connect, Service.BIND_AUTO_CREATE);
+    }
+
+    /**
+     * 测试
+     */
+    public void testResetHW() throws Exception {
+        XLog.d(TAG, "start() called");
+        if (SERVICE_UUID == null && BLE_PUBLIC_MAC_ADDRESS == null) {
+            throw new Exception("must call setServiceUuid and setBlePublicMacAddress first!");
+        }
+        AciHciCommand.bleHwReset(listenTask);
     }
 
     //--------------------------command control----------------start
     public void testnotify() {
         XLog.d(TAG, "TODO 测试，发送 notify");
         sendMsg2PeripheralService(PeripheralService.MSG_TEST_SEND_NOTIFY);
-    }
-
-    /**
-     * 开启入口
-     */
-    public void start() throws Exception {
-        XLog.d(TAG, "start() called");
-        if (SERVICE_UUID == null && BLE_PUBLIC_MAC_ADDRESS == null) {
-            throw new Exception("must call setServiceUuid and setBlePublicMacAddress first!");
-        }
-        AciHciCommand.bleHwReset(listenTask);
     }
 
     /**

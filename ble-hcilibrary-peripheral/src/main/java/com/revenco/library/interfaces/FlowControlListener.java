@@ -15,7 +15,7 @@ public interface FlowControlListener {
 
     void appConnect(AppConnectBean appConnectBean);
 
-    void receiveAttVal(FlowStatus status, String appBleMac, byte[] char_uuid, byte[] values);
+    void receiveAttVal(  String appBleMac, byte[] char_uuid, byte[] values);
 
-    void verifyCertificate(byte status,byte reason);
+    void verifyCertificate(byte status, byte reason);
 }

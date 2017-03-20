@@ -26,7 +26,4 @@ public enum FlowStatus implements Serializable {
     STATUS_HCI_READY_DISCONNECT,
     STATUS_ENABLE_ADVERTISING,
     STATUS_RESETHW_INIT,
-    //app 连接状态以及接收到数据
-    STATUS_APP_CONNECT_STATUS,
-    STATUS_REVEIVE_ATTRIBUTE_VALUES
 }

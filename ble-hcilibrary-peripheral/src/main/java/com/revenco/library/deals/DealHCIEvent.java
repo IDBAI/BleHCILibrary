@@ -10,7 +10,6 @@ import com.revenco.library.command.HCIVendorEcode;
 import com.revenco.library.core.PeripheralService;
 import com.revenco.library.interfaces.FlowControlListener;
 import com.revenco.library.others.AppConnectStatus;
-import com.revenco.library.others.FlowStatus;
 import com.revenco.library.utils.ConvertUtil;
 import com.revenco.library.utils.Tools;
 import com.revenco.library.utils.XLog;
@@ -267,7 +266,7 @@ public class DealHCIEvent {
                         + "\n char_uuid :" + ConvertUtil.byte2HexStrWithSpace(charBean.char_uuid)
                         + "\n attr_data :" + ConvertUtil.byte2HexStrWithSpace(attr_data));
                 if (listener != null)
-                    listener.receiveAttVal(FlowStatus.STATUS_REVEIVE_ATTRIBUTE_VALUES, appMac, charBean.char_uuid, attr_data);
+                    listener.receiveAttVal(appMac, charBean.char_uuid, attr_data);
             }
         }
     }

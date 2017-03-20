@@ -569,7 +569,8 @@ public class PeripheralService extends Service implements SerialPortStatusDataLi
     }
 
     @Override
-    public void receiveAttVal(FlowStatus status, String appBleMac, byte[] char_uuid, byte[] values) {
+    public void receiveAttVal(String appBleMac, byte[] char_uuid, byte[] values) {
+        XLog.d(TAG, "receiveAttVal() called ");
         String uuid_str = ConvertUtil.byte2HexStrWithSpace(char_uuid);
         String values_str = ConvertUtil.byte2HexStrWithSpace(values);
         String textstr = "appBleMac : " + appBleMac + "\n" + "uuid : " + uuid_str + "\n" + "vaules : " + values_str;
