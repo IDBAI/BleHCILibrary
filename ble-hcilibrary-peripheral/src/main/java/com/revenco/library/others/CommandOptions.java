@@ -34,6 +34,7 @@ public class CommandOptions {
      * @return
      */
     public static ArrayList<byte[]> splitFFPackage(byte[] data) throws Exception {
+        XLog.d(TAG, "splitFFPackage() called ");
         ArrayList<byte[]> list = new ArrayList<>();
         for (int i = 0; i < data.length; ) {
             if (data[i] == (byte) 0x04 && data[i + 1] == (byte) 0xFF) {
@@ -64,6 +65,7 @@ public class CommandOptions {
      * @param data
      */
     public static void CommandStatusEvent(Handler mhandler, int what, long delay, byte[] data) {
+        XLog.d(TAG, "CommandStatusEvent() called ");
         int ParameterTotalLength = data[2];
         int status = data[3];
         int Num_HCI_Command_Packets = data[4];
@@ -97,6 +99,7 @@ public class CommandOptions {
      * @return
      */
     public static byte[] convertUuid(byte[] uuid) {
+        XLog.d(TAG, "convertUuid() called ");
         if (Arrays.equals(uuid, Config.CHAR_UUID_WRITE_00))
             return Config.CHAR_UUID_WRITE_00;
         else if (Arrays.equals(uuid, Config.CHAR_UUID_WRITE_01))

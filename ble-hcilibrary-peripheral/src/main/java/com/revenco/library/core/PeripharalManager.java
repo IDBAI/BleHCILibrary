@@ -36,9 +36,16 @@ public class PeripharalManager {
     ServiceConnection connect = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
+            XLog.d(TAG, "3 启动串口监听");
             //3 启动串口监听
             messenger = new Messenger(service);
             listenTask.execute();
+            try {
+                Thread.sleep(30);
+                start();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
         @Override
@@ -73,17 +80,23 @@ public class PeripharalManager {
 
     public void start(Context context) {
         this.context = context;
-        //1初始化串口监听
+        //1 初始化串口监听
         listenTask = new SerialPortListenTask(context);
-        //2启动服务,内部监听了串口数据
+        XLog.d(TAG, "1 初始化串口监听");
+        //2 启动服务,内部监听了串口数据
         Intent service = new Intent(context, PeripheralService.class);
         context.bindService(service, connect, Service.BIND_AUTO_CREATE);
+        XLog.d(TAG, "2 启动服务,内部监听了串口数据");
     }
 
     /**
      * 测试
      */
     public void testResetHW() throws Exception {
+        start();
+    }
+
+    private void start() throws Exception {
         XLog.d(TAG, "start() called");
         if (SERVICE_UUID == null && BLE_PUBLIC_MAC_ADDRESS == null) {
             throw new Exception("must call setServiceUuid and setBlePublicMacAddress first!");

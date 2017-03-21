@@ -546,7 +546,13 @@ public class PeripheralService extends Service implements SerialPortStatusDataLi
                 break;
             case STATUS_GATT_UPDATE_CHAR_VAL_SUCCESS://8 gatt update char val ---> notify 成功
                 XLog.d(TAG, "通知开门结果成功--> 断开连接");
-                this.flowStatusChange(FlowStatus.STATUS_HCI_READY_DISCONNECT);
+//                此处做等待notify 发送到app
+                try {
+                    Thread.sleep(30);
+                    this.flowStatusChange(FlowStatus.STATUS_HCI_READY_DISCONNECT);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 break;
         }
         Intent intent = new Intent(ACTON_FLOWCONTROL_STATUS);

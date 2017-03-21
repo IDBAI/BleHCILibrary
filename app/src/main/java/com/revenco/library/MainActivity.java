@@ -24,8 +24,6 @@ import com.revenco.library.utils.XLog;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class MainActivity extends Activity {
     private static final String TAG = "MainActivity";
@@ -130,18 +128,7 @@ public class MainActivity extends Activity {
             }
         };
         registerReceiver(receive, getIntentFilter());
-        Timer timer = new Timer();
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        resetBtn.performClick();
-                    }
-                });
-            }
-        }, new Date(), 5000L);
+
     }
 
     public IntentFilter getIntentFilter() {
