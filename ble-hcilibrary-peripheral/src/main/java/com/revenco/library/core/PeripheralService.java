@@ -229,14 +229,16 @@ public class PeripheralService extends Service implements SerialPortStatusDataLi
                 XLog.d(TAG, "出现异常数据，非0x04开头");
                 for (int i = 0; i < data.length; i++) {
                     if (data[i] == (byte) 0x04) {
-                        int valLen = data.length - i;
-                        byte[] values = new byte[valLen];
-                        System.arraycopy(data, i, values, 0, valLen);
-                        XLog.d(TAG, "处理了异常数据");
                         try {
+                            int valLen = data.length - i;
+                            byte[] values = new byte[valLen];
+                            System.arraycopy(data, i, values, 0, valLen);
+                            XLog.d(TAG, "处理了异常数据");
                             parseHCIEventPKT(currentOpCode, values);
                         } catch (Exception e) {
                             e.printStackTrace();
+                            //此处一般越界,进行reset
+                            this.flowStatusChange(FlowStatus.STATUS_RESETHW_INIT);
                         }
                         break;
                     }
