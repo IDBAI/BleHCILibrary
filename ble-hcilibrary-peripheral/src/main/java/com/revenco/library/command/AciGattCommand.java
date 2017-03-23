@@ -168,7 +168,7 @@ public class AciGattCommand {
 
     /**
      * notify app 开门状态
-     *               paramLen     service_handler           char_handle      Val_Offset    valLen        values
+     * paramLen     service_handler           char_handle      Val_Offset    valLen        values
      * 01 06 FD        0E >            0C 00                 1B 00              00          02         CHAR_NOTIFY_STATUS   STATUS_REASON
      *
      * @param portListenTask
@@ -178,7 +178,8 @@ public class AciGattCommand {
      * @param STATUS_REASON
      */
     public static void updateCharValues(SerialPortListenTask portListenTask, byte[] service_handler, byte[] char_handle, byte CHAR_NOTIFY_STATUS, byte STATUS_REASON) {
-        int ParameterTotalLength = 8;
+        int paddingLen = 18;//values为20字节，其中 status + reason 占了两位
+        int ParameterTotalLength = 8 + paddingLen;
         byte[] buffer = new byte[3 + 1 + ParameterTotalLength];
         buffer[0] = AciCommandConfig.HCI_COMMAND_PKT;
         System.arraycopy(OpCode.ACI_GATT_UPD_CHAR_VAL_opCode, 0, buffer, 1, 2);
@@ -189,10 +190,17 @@ public class AciGattCommand {
         int Val_Offset = 0;
         buffer[8] = (byte) Val_Offset;
         //
-        int ValLen = 2;//值长度
+        int ValLen = 2 + paddingLen;//值长度
         buffer[9] = (byte) ValLen;
         buffer[10] = CHAR_NOTIFY_STATUS;
         buffer[11] = STATUS_REASON;
+        //补位测试
+        for (int i = 0; i < paddingLen; i++) {
+            if (i == paddingLen - 1)
+                buffer[12 + i] = (byte) 0x0A;//表示\n 换行
+            else
+                buffer[12 + i] = (byte) 0x00;
+        }
         //send
         portListenTask.sendData(OpCode.ACI_GATT_UPD_CHAR_VAL_opCode, buffer);
     }

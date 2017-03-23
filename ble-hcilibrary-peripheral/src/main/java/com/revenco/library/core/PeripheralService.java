@@ -86,6 +86,10 @@ public class PeripheralService extends Service implements SerialPortStatusDataLi
     private static final byte WRITE_PROPERTIES = CharacteristicProperty.PROPERTY_WRITE | CharacteristicProperty.PROPERTY_WRITE_NO_RESPONSE;
     private static final byte NOFITY_PROPERTIES = CharacteristicProperty.PROPERTY_NOTIFY;
     /**
+     * 最多发送notify的次数
+     */
+    private static final int MAX_NOFITY_TIME = 3;
+    /**
      * 暴力等待重置广播事件，等待时间
      */
     private static final long INIT_HW_DELAY = 300L;
@@ -103,6 +107,7 @@ public class PeripheralService extends Service implements SerialPortStatusDataLi
      * 特征值实体集合
      */
     private static SparseArray<CharBean> charBeanSparseArray = new SparseArray<>(CHAR_SET_SIZE);
+    private int sendNotifyTime = 0;
     private Messenger messenger = new Messenger(new BLEHandler());
     private HashMap<byte[], byte[]> UUIDAttrValuesHashMap = new HashMap<>();
     private String lastConnectAppmac;
@@ -548,12 +553,18 @@ public class PeripheralService extends Service implements SerialPortStatusDataLi
                 break;
             case STATUS_GATT_UPDATE_CHAR_VAL_SUCCESS://8 gatt update char val ---> notify 成功
                 XLog.d(TAG, "通知开门结果成功--> 断开连接");
-//                此处做等待notify 发送到app
-                try {
-                    Thread.sleep(30);
-                    this.flowStatusChange(FlowStatus.STATUS_HCI_READY_DISCONNECT);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                sendNotifyTime++;
+                if (sendNotifyTime < MAX_NOFITY_TIME) {//再次发送notify
+                    PeripharalManager.getInstance().getListenTask().resendlastData();
+                } else {
+                    sendNotifyTime = 0;
+                    //此处做等待notify 发送到app
+                    try {
+                        Thread.sleep(30);
+                        this.flowStatusChange(FlowStatus.STATUS_HCI_READY_DISCONNECT);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
                 break;
         }

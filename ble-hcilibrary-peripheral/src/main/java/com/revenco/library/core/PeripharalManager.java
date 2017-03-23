@@ -5,6 +5,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.os.AsyncTask;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
@@ -39,7 +40,7 @@ public class PeripharalManager {
             XLog.d(TAG, "3 启动串口监听");
             //3 启动串口监听
             messenger = new Messenger(service);
-            listenTask.execute();
+            listenTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             try {
                 Thread.sleep(30);
                 start();
@@ -50,7 +51,11 @@ public class PeripharalManager {
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
+            XLog.e(TAG, "onServiceDisconnected!");
+            if (listenTask != null)
+                listenTask.stoplistener();
             messenger = null;
+            start(context);
         }
     };
 
@@ -87,6 +92,12 @@ public class PeripharalManager {
         Intent service = new Intent(context, PeripheralService.class);
         context.bindService(service, connect, Service.BIND_AUTO_CREATE);
         XLog.d(TAG, "2 启动服务,内部监听了串口数据");
+    }
+
+    public void destory() {
+        XLog.d(TAG, "destory() called");
+        if (listenTask != null)
+            listenTask.stoplistener();
     }
 
     /**

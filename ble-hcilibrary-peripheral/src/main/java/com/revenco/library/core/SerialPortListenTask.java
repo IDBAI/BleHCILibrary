@@ -59,6 +59,7 @@ public class SerialPortListenTask extends android.os.AsyncTask<Void, byte[], Boo
                         sendData(currentOpCode, currentSendData);
                     } else {
                         XLog.e(TAG, "超过最大重试发送指令次数！");
+                        XLog.e(TAG, "蓝牙串口异常！！");
                     }
                 } else {//不同指令
                     timeouts = 1;
@@ -173,6 +174,25 @@ public class SerialPortListenTask extends android.os.AsyncTask<Void, byte[], Boo
         }
         XLog.d(TAG, "=====> serial port listen stop!!!!!");
         return result;
+    }
+
+    public void stoplistener() {
+        XLog.d(TAG, "stoplistener() called");
+        this.cancel(true);
+        if (serialPort != null)
+            serialPort.close();
+        if (mHandler != null)
+            mHandler.removeMessages(TIMEOUT_MSG);
+        mHandler = null;
+    }
+
+    /**
+     * 重发上一次的数据
+     */
+    public synchronized void resendlastData() {
+        XLog.d(TAG, "resendlastData() called ");
+        if (currentOpCode != null && currentSendData != null)
+            sendData(currentOpCode, currentSendData);
     }
 
     //串口发送数据

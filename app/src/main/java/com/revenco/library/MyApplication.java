@@ -3,6 +3,7 @@ package com.revenco.library;
 import android.app.Application;
 
 import com.revenco.library.core.PeripharalManager;
+import com.revenco.library.utils.XLog;
 
 /**
  * company:wanzhong
@@ -11,6 +12,7 @@ import com.revenco.library.core.PeripharalManager;
  * class_version: 1.0.0
  */
 public class MyApplication extends Application {
+    private static final String TAG = "MyApplication";
     /**
      * beacon 的mac地址
      */
@@ -27,6 +29,7 @@ public class MyApplication extends Application {
 
     @Override
     public void onCreate() {
+        XLog.d(TAG, "onCreate() called");
         super.onCreate();
         try {
             PeripharalManager.getInstance().setBlePublicMacAddress(BLE_PUBLIC_MAC_ADDRESS);

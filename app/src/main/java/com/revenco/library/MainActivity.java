@@ -128,7 +128,6 @@ public class MainActivity extends Activity {
             }
         };
         registerReceiver(receive, getIntentFilter());
-
     }
 
     public IntentFilter getIntentFilter() {
@@ -141,8 +140,11 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onDestroy() {
+        XLog.d(TAG, "onDestroy() called");
         super.onDestroy();
         unregisterReceiver(receive);
         Tools.releaseWakeLock();
+        PeripharalManager.getInstance().destory();
+        System.exit(-1);
     }
 }
