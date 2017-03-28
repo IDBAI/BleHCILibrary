@@ -234,15 +234,39 @@ public class DealCommandResult {
         System.arraycopy(paramContent, 1, opcode, 0, 2);//第0位为：Num_HCI_Command_Packets
         if (Arrays.equals(opcode, currentOpCode)) {
             byte status = paramContent[3];
-            if (status == AciCommandConfig.EVENT_BLE_STATUS_SUCCESS) {
-                XLog.d(TAG, "* gatt add service  success!");
-                //
-                byte[] Service_Handle = new byte[2];
-                //拷贝Handler
-                System.arraycopy(paramContent, 4, Service_Handle, 0, 2);
-                if (listener != null)
-                    listener.flowStatusChange(FlowStatus.STATUS_GATT_ADD_SERVICE_SUCCESS, Service_Handle);
-            } else {
+            boolean isOtherError = false;
+            switch (status) {
+                case 0x00:
+                    XLog.d(TAG, "* gatt add service  success!");
+                    //
+                    byte[] Service_Handle = new byte[2];
+                    //拷贝Handler
+                    System.arraycopy(paramContent, 4, Service_Handle, 0, 2);
+                    if (listener != null)
+                        listener.flowStatusChange(FlowStatus.STATUS_GATT_ADD_SERVICE_SUCCESS, Service_Handle);
+                    break;
+                case 0x47:
+                    XLog.e(TAG, "Error");
+                    isOtherError = true;
+                    break;
+                case 0x1F:
+                    XLog.e(TAG, "Out of memory");
+                    isOtherError = true;
+                    break;
+                case 0x61:
+                    XLog.e(TAG, "Invalid parameter");
+                    isOtherError = true;
+                    break;
+                case 0x62:
+                    XLog.e(TAG, "Out of handle");
+                    isOtherError = true;
+                    break;
+                case 0x64:
+                    XLog.e(TAG, "Insufficient resources");
+                    isOtherError = true;
+                    break;
+            }
+            if (isOtherError) {
                 XLog.e(TAG, "gatt add service failed,reset HW again!");
                 if (listener != null)
                     listener.flowStatusChange(FlowStatus.STATUS_RESETHW_INIT);

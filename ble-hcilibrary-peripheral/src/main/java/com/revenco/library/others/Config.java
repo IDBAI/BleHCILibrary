@@ -8,7 +8,7 @@ public class Config {
     /**
      * 硬编码-连接的最大时长
      */
-    public static final long CONNECT_MAX_TIME = 5500L;
+    public static final long CONNECT_MAX_TIME = 5 * 1000L;
     /**
      * 串口BLE设备
      **/
@@ -62,4 +62,35 @@ public class Config {
      * REASON——
      */
     public static final byte SUCCESS_REASON = 0x00;
+
+    ////------------以前的uuid
+//    // D973F2E1-B19E-11E2-9E96-0800200C9A66
+//    // D973F2E2-B19E-11E2-9E96-0800200C9A66
+//    // D973F2E3-B19E-11E2-9E96-0800200C9A66
+//    // D973F2E4-B19E-11E2-9E96-0800200C9A66
+//    // D973F2E5-B19E-11E2-9E96-0800200C9A66
+//    // D973F2E6-B19E-11E2-9E96-0800200C9A66
+//    // D973F2E7-B19E-11E2-9E96-0800200C9A66
+//    // D973F2E8-B19E-11E2-9E96-0800200C9A66
+//    /**
+//     * write UUID，硬编码-----------------------start
+//     */
+//    public static final byte[] CHAR_UUID_WRITE_00 = {(byte) 0xD9, 0x73, (byte) 0xF2, (byte) 0xE1, (byte) 0xB1, (byte) 0x9E, 0x11, (byte) 0xE2, (byte) 0x9E, (byte) 0x96, (byte) 0x08, (byte) 0x00, 0x20, 0x0C, (byte) 0x9A, 0x66};
+//    public static final byte[] CHAR_UUID_WRITE_01 = {(byte) 0xD9, 0x73, (byte) 0xF2, (byte) 0xE2, (byte) 0xB1, (byte) 0x9E, 0x11, (byte) 0xE2, (byte) 0x9E, (byte) 0x96, (byte) 0x08, (byte) 0x00, 0x20, 0x0C, (byte) 0x9A, 0x66};
+//    public static final byte[] CHAR_UUID_WRITE_02 = {(byte) 0xD9, 0x73, (byte) 0xF2, (byte) 0xE3, (byte) 0xB1, (byte) 0x9E, 0x11, (byte) 0xE2, (byte) 0x9E, (byte) 0x96, (byte) 0x08, (byte) 0x00, 0x20, 0x0C, (byte) 0x9A, 0x66};
+//    public static final byte[] CHAR_UUID_WRITE_03 = {(byte) 0xD9, 0x73, (byte) 0xF2, (byte) 0xE4, (byte) 0xB1, (byte) 0x9E, 0x11, (byte) 0xE2, (byte) 0x9E, (byte) 0x96, (byte) 0x08, (byte) 0x00, 0x20, 0x0C, (byte) 0x9A, 0x66};
+//    public static final byte[] CHAR_UUID_WRITE_04 = {(byte) 0xD9, 0x73, (byte) 0xF2, (byte) 0xE5, (byte) 0xB1, (byte) 0x9E, 0x11, (byte) 0xE2, (byte) 0x9E, (byte) 0x96, (byte) 0x08, (byte) 0x00, 0x20, 0x0C, (byte) 0x9A, 0x66};
+//    public static final byte[] CHAR_UUID_WRITE_05 = {(byte) 0xD9, 0x73, (byte) 0xF2, (byte) 0xE6, (byte) 0xB1, (byte) 0x9E, 0x11, (byte) 0xE2, (byte) 0x9E, (byte) 0x96, (byte) 0x08, (byte) 0x00, 0x20, 0x0C, (byte) 0x9A, 0x66};
+//    public static final byte[] CHAR_UUID_WRITE_06 = {(byte) 0xD9, 0x73, (byte) 0xF2, (byte) 0xE7, (byte) 0xB1, (byte) 0x9E, 0x11, (byte) 0xE2, (byte) 0x9E, (byte) 0x96, (byte) 0x08, (byte) 0x00, 0x20, 0x0C, (byte) 0x9A, 0x66};
+//    /**
+//     * write UUID，硬编码-----------------------end
+//     */
+//    ///***////
+//    /**
+//     * notify UUID，硬编码-----------------------start
+//     */
+//    public static final byte[] CHAR_UUID_NOTYFY = {(byte) 0xD9, 0x73, (byte) 0xF2, (byte) 0xE8, (byte) 0xB1, (byte) 0x9E, 0x11, (byte) 0xE2, (byte) 0x9E, (byte) 0x96, (byte) 0x08, (byte) 0x00, 0x20, 0x0C, (byte) 0x9A, 0x66};
+//    /**
+//     * notify UUID，硬编码-----------------------end
+//     */
 }

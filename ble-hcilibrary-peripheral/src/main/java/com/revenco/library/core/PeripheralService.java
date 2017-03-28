@@ -229,8 +229,6 @@ public class PeripheralService extends Service implements SerialPortStatusDataLi
                 }
                 break;
             default:
-//             16 04 0E 04 01 03 0C 00  size = 8 (0~7)
-//             兼容非04 开头的异常数据
                 XLog.d(TAG, "出现异常数据，非0x04开头");
                 for (int i = 0; i < data.length; i++) {
                     if (data[i] == (byte) 0x04) {
@@ -257,8 +255,9 @@ public class PeripheralService extends Service implements SerialPortStatusDataLi
      * @param currentOpCode
      * @param data          解析数据 必须是04 开头
      */
-    private synchronized void parseHCIEventPKT(byte[] currentOpCode, byte[] data) {
-        if (data[1] == LE__Event_code_Group) {//3E 组，判断SubEvent
+    private void parseHCIEventPKT(byte[] currentOpCode, byte[] data) {
+        XLog.d(TAG, "parseHCIEventPKT() called ");
+        if (data[1] == LE__Event_code_Group) { //3E 组，判断SubEvent
             //data[2] 为Parameter Total Length
             //data[3] : Subevent_Code
             switch (data[3]) {
@@ -298,9 +297,19 @@ public class PeripheralService extends Service implements SerialPortStatusDataLi
 //                      04 0F 04 00 01 06 04 size = 7
 //                      [0x04,0x0F,0x04,0x00,0x01,0x06,0x04]
 //                      04 0F 04 01 01 50 00 size = 7
+//                    04 0F         04  3A 01 06 04                      04 05 04 00 19 08 13 size = 14
                     XLog.e(TAG, "command_status_event !");
                     try {
                         CommandOptions.CommandStatusEvent(mhandler, INIT_HW_WHAT, INIT_HW_DELAY, data);
+                        // 尝试解析下一包
+                        int len = data[2];
+                        int totalLen = len + 3;
+                        if (data.length > totalLen) {//后面可能存在其他包
+                            XLog.e(TAG, "解析了可能存在的多包！");
+                            byte[] next = new byte[data.length - totalLen];
+                            System.arraycopy(data, totalLen, next, 0, data.length - totalLen);
+                            parseHCIEventPKT(currentOpCode, next);
+                        }
                     } catch (Exception e) {//捕获越界异常
                         e.printStackTrace();
                     }
