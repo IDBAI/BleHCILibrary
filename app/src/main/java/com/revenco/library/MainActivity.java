@@ -8,6 +8,7 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.os.SystemClock;
+import android.text.Editable;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -80,7 +81,7 @@ public class MainActivity extends Activity {
                         connectBean = (AppConnectBean) intent.getSerializableExtra(PeripheralService.EXTRA_APPBEAN);
                         appconnect.append(connectBean.toTestString() + "\n");
                         appconnect.scrollTo(0, 1000);
-                        XLog.d("GOOD", connectBean.toString());
+//                        XLog.d(TAG, connectBean.toString());
                         if (connectBean.status == AppConnectStatus.status_connected) {
 //                            app开始连接开始计时
                         }
@@ -94,7 +95,7 @@ public class MainActivity extends Activity {
                         String textstr = "appMac : " + appMac + "\n" + "uuid : " + uuid_str + "\n" + "vaules : " + values_str;
                         attrValues.append(textstr + "\n");
                         attrValues.scrollTo(0, 1000);
-                        XLog.d("GOOD", textstr);
+//                        XLog.d(TAG, textstr);
                         break;
                     case PeripheralService.ACTON_FLOWCONTROL_STATUS:
                         //测试显示UI提示
@@ -105,8 +106,16 @@ public class MainActivity extends Activity {
                             starttime = SystemClock.uptimeMillis();
                         if (currentStatus.toString().equalsIgnoreCase(FlowStatus.STATUS_ACI_GAP_SET_DISCOVERABLE_SUCCESS.toString())) {
                             //开启广播成功，数据分段显示
-                            appconnect.append("\n\n");
-                            attrValues.append("\n");
+                            Editable text = appconnect.getText();
+                            String[] split = text.toString().split("\n");
+                            String appString = split[split.length - 1 == 0 ? 0 : split.length - 1] + "\n" + split[split.length - 2 == -1 ? 0 : split.length - 2] + "\n\n";
+                            appconnect.setText(appString);
+                            //
+                            attrValues.append("\n\n");
+                            String[] split1 = attrValues.getText().toString().split("\n\n");
+                            String valuesatt = split1[split1.length - 1 == 0 ? 0 : split1.length - 1] + "\n" + split1[split1.length - 2 == -1 ? 0 : split1.length - 2] + "\n\n";
+                            attrValues.setText(valuesatt);
+                            //
                             if (starttime != -1) {
                                 long jiange = SystemClock.uptimeMillis() - starttime;
                                 resettime.append("reset：" + jiange * 1.0f / 1000 + " 秒!\n");
@@ -115,6 +124,7 @@ public class MainActivity extends Activity {
                                 totalTime += jiange;
                                 if (testCount % 5 == 0) {
                                     XLog.d(TAG, "测试：" + testCount + "次，平均：" + (totalTime * 1.0f / testCount) + " ms");
+                                    resettime.setText("reset：" + jiange * 1.0f / 1000 + " 秒!\n");
                                 }
                             }
                             Date date = new Date();
@@ -140,7 +150,7 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onDestroy() {
-        XLog.d(TAG, "onDestroy() called");
+//        XLog.d(TAG, "onDestroy() called");
         super.onDestroy();
         unregisterReceiver(receive);
         Tools.releaseWakeLock();

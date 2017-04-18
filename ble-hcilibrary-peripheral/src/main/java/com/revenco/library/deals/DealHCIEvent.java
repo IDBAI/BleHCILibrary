@@ -187,7 +187,7 @@ public class DealHCIEvent {
      * @param data
      */
     private static void dealsingleFrame(Context context, FlowControlListener listener, byte[] data) {
-        XLog.d("GOOD", "data = " + ConvertUtil.byte2HexStrWithSpace(data));
+        XLog.d(TAG, "data = " + ConvertUtil.byte2HexStrWithSpace(data));
         XLog.d(TAG, "data = " + ConvertUtil.byte2HexStrWithSpace(data));
         //The connection handle which modified the attribute.
         byte[] Connection_Handle = new byte[2];

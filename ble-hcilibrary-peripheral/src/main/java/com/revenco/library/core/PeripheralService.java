@@ -171,7 +171,7 @@ public class PeripheralService extends Service implements SerialPortStatusDataLi
     }
 
     public void removeWaitingResetHWTimer() {
-        XLog.d("FlowControl", "移除等待指令的reset HW 计时");
+        XLog.d(TAG, "移除等待指令的reset HW 计时");
         if (mhandler != null)
             mhandler.removeMessages(INIT_HW_WHAT);
     }
@@ -280,6 +280,7 @@ public class PeripheralService extends Service implements SerialPortStatusDataLi
         } else {
             switch (data[1]) {
                 case Disconnect_Complete:// 0x05:断开连接事件
+                    XLog.d(TAG, "0x05:断开连接事件");
                     removeWaitingResetHWTimer();
                     if (isIniting) {
                         XLog.d(TAG, "isIniting = true!");
@@ -312,6 +313,7 @@ public class PeripheralService extends Service implements SerialPortStatusDataLi
                         }
                     } catch (Exception e) {//捕获越界异常
                         e.printStackTrace();
+                        XLog.d(TAG, e.toString());
                     }
                     break;
                 case Hardware_Error_Event://do nothing
@@ -540,7 +542,9 @@ public class PeripheralService extends Service implements SerialPortStatusDataLi
             case STATUS_ACI_GAP_SET_DISCOVERABLE_SUCCESS://12 开启广播成功
                 //1、必须要移除app连接的计时
                 //2、必须要移除等待指令Reset的计时器
+                XLog.d(TAG, "//1、必须要移除app连接的计时");
                 removeAppConnectTimer();
+                XLog.d(TAG, "//2、必须要移除等待指令Reset的计时器");
                 PeripharalManager.getInstance().sendMsg2PeripheralService(PeripheralService.MSG_REMOVE_WAITING_TIMER);
                 XLog.d(TAG, "11 开启广播成功");
                 PeripheralService.isIniting = false;
@@ -788,7 +792,7 @@ public class PeripheralService extends Service implements SerialPortStatusDataLi
     }
 
     private void removeAppConnectTimer() {
-        XLog.d(TAG, "移除app连接的计时器");
+        XLog.d(TAG, "移除app" + Config.CONNECT_MAX_TIME + "ms连接的计时器");
         if (mhandler != null)
             mhandler.removeMessages(APP_CONNECT_WHAT);
     }
@@ -813,6 +817,7 @@ public class PeripheralService extends Service implements SerialPortStatusDataLi
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             //TODO 接收manager 发过来的event
+            XLog.d(TAG, "接收manager 发过来的event");
             switch (msg.what) {
                 case MSG_REMOVE_WAITING_TIMER:
                     removeWaitingResetHWTimer();

@@ -87,7 +87,7 @@ public class CommandOptions {
             XLog.e(TAG, "// TODO: 2017/3/14 当做异常，暴力复位 ");
         }
         if (mhandler != null) {
-            XLog.e("FlowControl", "开始 " + delay + " ms reset HW 计时！");
+            XLog.e(TAG, "开始 " + delay + " ms reset HW 计时！");
             mhandler.sendEmptyMessageDelayed(what, delay);
         }
     }
