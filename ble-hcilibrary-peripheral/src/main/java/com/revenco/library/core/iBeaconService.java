@@ -66,12 +66,9 @@ import static com.revenco.library.others.ConfigProcess.config_mode;
 import static com.revenco.library.others.ConfigProcess.config_publicAddress;
 
 /**
- * <p> company:wanzhong</p>
- * <p> Created by Administrator on 2017/2/27.</p>
- * <p> class describe: BLE外围数据提供，事件解析等服务，由 PeripharalManager 所管理</p>
- * <p> class_version: 1.0.0</p>
+ * iBeacon 基站模式
  */
-public class PeripheralService extends Service implements SerialPortStatusDataListener, FlowControlListener {
+public class iBeaconService extends Service implements SerialPortStatusDataListener, FlowControlListener {
     private static final String TAG = "PeripheralService";
     private static final byte WRITE_PROPERTIES = CharacteristicProperty.PROPERTY_WRITE | CharacteristicProperty.PROPERTY_WRITE_NO_RESPONSE;
     private static final byte NOFITY_PROPERTIES = CharacteristicProperty.PROPERTY_NOTIFY;
@@ -90,7 +87,7 @@ public class PeripheralService extends Service implements SerialPortStatusDataLi
      */
     private static volatile boolean isIniting = false;
     private int sendNotifyTime = 0;
-    private Messenger messenger = new Messenger(new BLEHandler());
+    private Messenger messenger = new Messenger(new iBeaconService.BLEHandler());
     private HashMap<byte[], byte[]> UUIDAttrValuesHashMap = new HashMap<>();
     private String lastConnectAppmac;
     private byte[][] uuidlist = {
@@ -110,11 +107,11 @@ public class PeripheralService extends Service implements SerialPortStatusDataLi
                 case INIT_HW_WHAT:
                     isIniting = true;
                     XLog.e(TAG, "等待超过 " + INIT_HW_DELAY + " ms , reset HW !");
-                    PeripheralService.this.flowStatusChange(FlowStatus.STATUS_RESETHW_INIT);
+                    iBeaconService.this.flowStatusChange(FlowStatus.STATUS_RESETHW_INIT);
                     break;
                 case APP_CONNECT_WHAT:
                     XLog.d(TAG, "时间到，断开连接！");
-                    PeripheralService.this.flowStatusChange(FlowStatus.STATUS_HCI_READY_DISCONNECT);
+                    iBeaconService.this.flowStatusChange(FlowStatus.STATUS_HCI_READY_DISCONNECT);
                     break;
             }
             return false;
@@ -414,15 +411,19 @@ public class PeripheralService extends Service implements SerialPortStatusDataLi
         else if (Arrays.equals(currentOpCode, OpCode.HCI_LE_SET_SCAN_RESPONSE_DATA_opCode)) {
             DealCommandResult.dealSetScanResponseData(this, currentOpCode, paramContent);
         }
-        //10、ACI_Gap 开启广播
+        //10、ACI_Gap 设置可发现
         else if (Arrays.equals(currentOpCode, OpCode.ACI_GAP_SET_DISCOVERABLE_opCode)) {
             DealCommandResult.dealAciGapDisCoverable(this, currentOpCode, paramContent);
         }
-        //11 更新广播数据
+        //11 删除ADTYPE
+        else if (Arrays.equals(currentOpCode, OpCode.ACI_GAP_DELETE_AD_TYPE_opCode)) {
+            DealCommandResult.dealAciGapDeleteADType(this, currentOpCode, paramContent);
+        }
+        //12 更新广播数据
         else if (Arrays.equals(currentOpCode, OpCode.ACI_GAP_UPDATE_ADV_DATA_opCode)) {
             DealCommandResult.dealAciGapUpdateADVData(this, currentOpCode, paramContent);
         }
-        //12、notify
+        //13、notify
         else if (Arrays.equals(currentOpCode, OpCode.ACI_GATT_UPD_CHAR_VAL_opCode)) {
             DealCommandResult.dealGattUpdateCharValResult(this, currentOpCode, paramContent);
         } else {
@@ -463,7 +464,7 @@ public class PeripheralService extends Service implements SerialPortStatusDataLi
             case STATUS_GATT_INIT_SUCCESS://6 gatt init 成功
                 XLog.d(TAG, "5 gatt init 成功");
                 //初始化GAP
-                AciGapCommand.aciGapInit(PeripharalManager.getInstance().getListenTask());
+                AciGapCommand.aciGapInitForibeacon(PeripharalManager.getInstance().getListenTask());
                 break;
             case STATUS_GAP_INIT_SUCCESS://7 gap init 成功
                 XLog.d(TAG, "6 gap init 成功");
@@ -491,16 +492,7 @@ public class PeripheralService extends Service implements SerialPortStatusDataLi
                         XLog.d(TAG, "8.0 add 8 个char 成功");
                         //debug
 //                        printCharBean();
-//                        方案1，添加描述符
-//                        CharBean notifyCharBean = getNotifyCharBean();
-//                        if (notifyCharBean != null) {
-//                            //可添加描述符
-//                            XLog.d(TAG, "notifyCharBean : " + notifyCharBean.toString());
-//                            AciGattCommand.gattAddCharDescriptor(PeripharalManager.getInstance().getListenTask(), notifyCharBean.service_handler, notifyCharBean.char_handle);
-//                        } else {
-//                            AciHciCommand.setBleScanResponseData(PeripharalManager.getInstance().getListenTask());
-//                        }
-                        //方案2 测试不添加描述符
+                        //方案2  不添加描述符
                         AciHciCommand.setBleScanResponseData(PeripharalManager.getInstance().getListenTask());
                     }
                 }
@@ -515,17 +507,22 @@ public class PeripheralService extends Service implements SerialPortStatusDataLi
                 break;
             case STATUS_SET_SCAN_RESPONSE_DATA_SUCCESS://11 设置扫描响应数据成功
                 XLog.d(TAG, "10 设置扫描响应数据成功");
-                AciGapCommand.aciGapSetDiscoverable(PeripharalManager.getInstance().getListenTask());
+                AciGapCommand.aciGapSetDiscoverableForiBeacon(PeripharalManager.getInstance().getListenTask());
+//                AciGapCommand.aciGapSetDiscoverableForiBeaconWithName(PeripharalManager.getInstance().getListenTask());
                 break;
-            case STATUS_ACI_GAP_SET_DISCOVERABLE_SUCCESS://12 开启广播成功
-                //1、必须要移除app连接的计时
-                //2、必须要移除等待指令Reset的计时器
-                XLog.d(TAG, "//1、必须要移除app连接的计时");
+            case STATUS_ACI_GAP_SET_DISCOVERABLE_SUCCESS://12 设置可发现成功
+                XLog.d(TAG, "//11、设置可发现成功");
+                AciGapCommand.AciGapdeleteADTypeDataForBeacon(PeripharalManager.getInstance().getListenTask());
+                break;
+            case ACI_GAP_DELETE_AD_TYPE_SUCCESS:
+                XLog.d(TAG, "12、删除ADType成功");
+                AciGapCommand.AciGapUpdateADVDataForBeacon(PeripharalManager.getInstance().getListenTask());
+                break;
+            case STATUS_ACI_GAP_UPDATE_ADV_DATA_SUCCESS:
+                XLog.d(TAG, "13、beacon 基站模式开启成功！");
                 removeAppConnectTimer();
-                XLog.d(TAG, "//2、必须要移除等待指令Reset的计时器");
                 PeripharalManager.getInstance().sendMsg2Service(MSG_REMOVE_WAITING_TIMER);
-                XLog.d(TAG, "11 开启广播成功");
-                PeripheralService.isIniting = false;
+                iBeaconService.isIniting = false;
                 break;
             case STATUS_HCI_READY_DISCONNECT:
                 removeAppConnectTimer();

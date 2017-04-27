@@ -58,7 +58,7 @@ public class AppConnectBean implements Serializable {
         return "AppConnectBean{" +
                 "appMac='" + appMac + '\'' +
                 ", Connection_Handle=" + ConvertUtil.byte2HexStrWithSpace(Connection_Handle) +
-                ", Role=" + Role +
+                ", Role_ALL=" + Role +
                 ", Peer_Address_Type=" + Peer_Address_Type +
                 ", Conn_Interval=" + ConvertUtil.byte2HexStrWithSpace(Conn_Interval) +
                 ", Conn_Latency=" + ConvertUtil.byte2HexStrWithSpace(Conn_Latency) +

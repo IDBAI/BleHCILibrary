@@ -10,7 +10,16 @@
         android:allowBackup="true"
         android:label="@string/app_name"
         android:supportsRtl="true">
-
+        <service
+            android:name="com.revenco.library.core.iBeaconService"
+            android:enabled="true"
+            android:exported="false">
+        </service>
+        <service
+            android:name="com.revenco.library.core.PeripheralService"
+            android:enabled="true"
+            android:exported="false">
+        </service>
     </application>
 
 </manifest>

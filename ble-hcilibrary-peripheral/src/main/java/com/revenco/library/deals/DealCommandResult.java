@@ -411,6 +411,18 @@ public class DealCommandResult {
         }
     }
 
+    public static void dealAciGapDeleteADType(FlowControlListener listener, byte[] currentOpCode, byte[] paramContent) {
+        byte[] opcode = new byte[2];
+        System.arraycopy(paramContent, 1, opcode, 0, 2);//第0位为：Num_HCI_Command_Packets
+        if (Arrays.equals(opcode, currentOpCode)) {
+            byte status = paramContent[3];
+            if (status == AciCommandConfig.EVENT_BLE_STATUS_SUCCESS) {
+                XLog.d(TAG, "* aci gap update ADV data success!");
+                if (listener != null)
+                    listener.flowStatusChange(FlowStatus.ACI_GAP_DELETE_AD_TYPE_SUCCESS);
+            }
+        }
+    }
     public static void dealAciGapUpdateADVData(FlowControlListener listener, byte[] currentOpCode, byte[] paramContent) {
         byte[] opcode = new byte[2];
         System.arraycopy(paramContent, 1, opcode, 0, 2);//第0位为：Num_HCI_Command_Packets

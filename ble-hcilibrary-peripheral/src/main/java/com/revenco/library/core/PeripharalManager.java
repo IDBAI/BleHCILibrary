@@ -89,7 +89,8 @@ public class PeripharalManager {
         listenTask = new SerialPortListenTask(context);
         XLog.d(TAG, "1 初始化串口监听");
         //2 启动服务,内部监听了串口数据
-        Intent service = new Intent(context, PeripheralService.class);
+        Intent service = new Intent(context, iBeaconService.class);
+//        Intent service = new Intent(context, PeripheralService.class);
         context.bindService(service, connect, Service.BIND_AUTO_CREATE);
         XLog.d(TAG, "2 启动服务,内部监听了串口数据");
     }
@@ -118,15 +119,15 @@ public class PeripharalManager {
     //--------------------------command control----------------start
     public void testnotify() {
         XLog.d(TAG, "TODO 测试，发送 notify");
-        sendMsg2PeripheralService(Helper.MSG_TEST_SEND_NOTIFY);
+        sendMsg2Service(Helper.MSG_TEST_SEND_NOTIFY);
     }
 
     /**
-     * 通过manager 发送消息给 PeripheralService 周边服务
+     * 通过manager 发送消息给  Service 周边服务
      *
      * @param what
      */
-    public void sendMsg2PeripheralService(int what) {
+    public void sendMsg2Service(int what) {
         sendMessage(null, what);
     }
     //--------------------------command control----------------end
