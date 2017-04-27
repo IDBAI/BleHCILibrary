@@ -15,8 +15,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.revenco.library.Bean.AppConnectBean;
+import com.revenco.library.core.Helper;
 import com.revenco.library.core.PeripharalManager;
-import com.revenco.library.core.PeripheralService;
 import com.revenco.library.others.AppConnectStatus;
 import com.revenco.library.others.FlowStatus;
 import com.revenco.library.utils.ConvertUtil;
@@ -77,8 +77,8 @@ public class MainActivity extends Activity {
             @Override
             public void onReceive(Context context, Intent intent) {
                 switch (intent.getAction()) {
-                    case PeripheralService.ACTION_APP_CONNECT_STATUS:
-                        connectBean = (AppConnectBean) intent.getSerializableExtra(PeripheralService.EXTRA_APPBEAN);
+                    case Helper.ACTION_APP_CONNECT_STATUS:
+                        connectBean = (AppConnectBean) intent.getSerializableExtra(Helper.EXTRA_APPBEAN);
                         appconnect.append(connectBean.toTestString() + "\n");
                         appconnect.scrollTo(0, 1000);
 //                        XLog.d(TAG, connectBean.toString());
@@ -86,10 +86,10 @@ public class MainActivity extends Activity {
 //                            app开始连接开始计时
                         }
                         break;
-                    case PeripheralService.ACTION_REVEIVE_ATTRIBUTE_VALUES:
-                        String appMac = intent.getStringExtra(PeripheralService.EXTRA_APPMAC);
-                        byte[] uuid = intent.getByteArrayExtra(PeripheralService.EXTRA_CHAR_UUID);
-                        byte[] values = intent.getByteArrayExtra(PeripheralService.EXTRA_CHAR_VALUES);
+                    case Helper.ACTION_REVEIVE_ATTRIBUTE_VALUES:
+                        String appMac = intent.getStringExtra(Helper.EXTRA_APPMAC);
+                        byte[] uuid = intent.getByteArrayExtra(Helper.EXTRA_CHAR_UUID);
+                        byte[] values = intent.getByteArrayExtra(Helper.EXTRA_CHAR_VALUES);
                         String uuid_str = ConvertUtil.byte2HexStrWithSpace(uuid);
                         String values_str = ConvertUtil.byte2HexStrWithSpace(values);
                         String textstr = "appMac : " + appMac + "\n" + "uuid : " + uuid_str + "\n" + "vaules : " + values_str;
@@ -97,7 +97,7 @@ public class MainActivity extends Activity {
                         attrValues.scrollTo(0, 1000);
 //                        XLog.d(TAG, textstr);
                         break;
-                    case PeripheralService.ACTON_FLOWCONTROL_STATUS:
+                    case Helper.ACTON_FLOWCONTROL_STATUS:
                         //测试显示UI提示
                         TextView textView = (TextView) findViewById(R.id.beanconStatus);
                         currentStatus = (FlowStatus) intent.getSerializableExtra("ACTION");
@@ -146,9 +146,9 @@ public class MainActivity extends Activity {
 
     public IntentFilter getIntentFilter() {
         IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(PeripheralService.ACTON_FLOWCONTROL_STATUS);
-        intentFilter.addAction(PeripheralService.ACTION_REVEIVE_ATTRIBUTE_VALUES);
-        intentFilter.addAction(PeripheralService.ACTION_APP_CONNECT_STATUS);
+        intentFilter.addAction(Helper.ACTON_FLOWCONTROL_STATUS);
+        intentFilter.addAction(Helper.ACTION_REVEIVE_ATTRIBUTE_VALUES);
+        intentFilter.addAction(Helper.ACTION_APP_CONNECT_STATUS);
         return intentFilter;
     }
 

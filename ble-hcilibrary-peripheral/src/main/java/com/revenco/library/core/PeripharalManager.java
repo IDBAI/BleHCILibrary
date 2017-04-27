@@ -118,7 +118,7 @@ public class PeripharalManager {
     //--------------------------command control----------------start
     public void testnotify() {
         XLog.d(TAG, "TODO 测试，发送 notify");
-        sendMsg2PeripheralService(PeripheralService.MSG_TEST_SEND_NOTIFY);
+        sendMsg2PeripheralService(Helper.MSG_TEST_SEND_NOTIFY);
     }
 
     /**

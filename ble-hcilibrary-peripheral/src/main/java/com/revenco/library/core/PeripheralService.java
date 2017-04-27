@@ -50,6 +50,18 @@ import static com.revenco.library.command.AciCommandConfig.LE_Connection_Update_
 import static com.revenco.library.command.AciCommandConfig.LE_Long_Term_Key_Request_Event_Sub_event_code;
 import static com.revenco.library.command.AciCommandConfig.LE_Read_Remote_Used_Features_Complete_Sub_event_code;
 import static com.revenco.library.command.AciCommandConfig.LE__Event_code_Group;
+import static com.revenco.library.core.Helper.ACTION_APP_CONNECT_STATUS;
+import static com.revenco.library.core.Helper.ACTION_REVEIVE_ATTRIBUTE_VALUES;
+import static com.revenco.library.core.Helper.ACTON_FLOWCONTROL_STATUS;
+import static com.revenco.library.core.Helper.CHAR_SET_SIZE;
+import static com.revenco.library.core.Helper.EXTRA_APPBEAN;
+import static com.revenco.library.core.Helper.EXTRA_APPMAC;
+import static com.revenco.library.core.Helper.EXTRA_CHAR_UUID;
+import static com.revenco.library.core.Helper.EXTRA_CHAR_VALUES;
+import static com.revenco.library.core.Helper.MSG_REMOVE_WAITING_TIMER;
+import static com.revenco.library.core.Helper.MSG_TEST_SEND_NOTIFY;
+import static com.revenco.library.core.Helper.charBeanSparseArray;
+import static com.revenco.library.core.Helper.currentHasConfig;
 import static com.revenco.library.others.ConfigProcess.config_mode;
 import static com.revenco.library.others.ConfigProcess.config_publicAddress;
 
@@ -60,28 +72,6 @@ import static com.revenco.library.others.ConfigProcess.config_publicAddress;
  * <p> class_version: 1.0.0</p>
  */
 public class PeripheralService extends Service implements SerialPortStatusDataListener, FlowControlListener {
-    public static final int MSG_REMOVE_WAITING_TIMER = 1001;
-    public static final int MSG_TEST_SEND_NOTIFY = 1002;
-    /**
-     * ble固件HCI控制的流程状态
-     */
-    public static final String ACTON_FLOWCONTROL_STATUS = "com.revenco.library.core.ACTON_FLOWCONTROL_STATUS";
-    /**
-     * 接收到特征值
-     */
-    public static final String ACTION_REVEIVE_ATTRIBUTE_VALUES = "com.revenco.library.core.ACTION_REVEIVE_ATTRIBUTE_VALUES";
-    /**
-     * app连接
-     */
-    public static final String ACTION_APP_CONNECT_STATUS = "com.revenco.library.core.ACTION_APP_CONNECT_STATUS";
-    /**
-     * 特征值集合
-     */
-    public static final int CHAR_SET_SIZE = 8;
-    public static final String EXTRA_APPBEAN = "EXTRA_APPBEAN";
-    public static final String EXTRA_APPMAC = "EXTRA_APPMAC";
-    public static final String EXTRA_CHAR_UUID = "EXTRA_CHAR_UUID";
-    public static final String EXTRA_CHAR_VALUES = "EXTRA_CHAR_VALUES";
     private static final String TAG = "PeripheralService";
     private static final byte WRITE_PROPERTIES = CharacteristicProperty.PROPERTY_WRITE | CharacteristicProperty.PROPERTY_WRITE_NO_RESPONSE;
     private static final byte NOFITY_PROPERTIES = CharacteristicProperty.PROPERTY_NOTIFY;
@@ -96,17 +86,9 @@ public class PeripheralService extends Service implements SerialPortStatusDataLi
     private static final int INIT_HW_WHAT = 10000;
     private static final int APP_CONNECT_WHAT = 10001;
     /**
-     * 当前已经配置的进度
-     */
-    public static volatile ConfigProcess currentHasConfig = ConfigProcess.config_none;
-    /**
      * 是否在init进行中
      */
-    public static volatile boolean isIniting = false;
-    /**
-     * 特征值实体集合
-     */
-    private static SparseArray<CharBean> charBeanSparseArray = new SparseArray<>(CHAR_SET_SIZE);
+    private static volatile boolean isIniting = false;
     private int sendNotifyTime = 0;
     private Messenger messenger = new Messenger(new BLEHandler());
     private HashMap<byte[], byte[]> UUIDAttrValuesHashMap = new HashMap<>();
@@ -138,10 +120,6 @@ public class PeripheralService extends Service implements SerialPortStatusDataLi
             return false;
         }
     });
-
-    public static SparseArray<CharBean> getCharBeanSparseArray() {
-        return charBeanSparseArray;
-    }
 
     /**
      * @param devices
@@ -545,7 +523,7 @@ public class PeripheralService extends Service implements SerialPortStatusDataLi
                 XLog.d(TAG, "//1、必须要移除app连接的计时");
                 removeAppConnectTimer();
                 XLog.d(TAG, "//2、必须要移除等待指令Reset的计时器");
-                PeripharalManager.getInstance().sendMsg2PeripheralService(PeripheralService.MSG_REMOVE_WAITING_TIMER);
+                PeripharalManager.getInstance().sendMsg2PeripheralService(MSG_REMOVE_WAITING_TIMER);
                 XLog.d(TAG, "11 开启广播成功");
                 PeripheralService.isIniting = false;
                 break;

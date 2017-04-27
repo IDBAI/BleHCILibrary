@@ -7,7 +7,7 @@ import com.revenco.library.Bean.AppConnectBean;
 import com.revenco.library.Bean.CharBean;
 import com.revenco.library.command.AciCommandConfig;
 import com.revenco.library.command.HCIVendorEcode;
-import com.revenco.library.core.PeripheralService;
+import com.revenco.library.core.Helper;
 import com.revenco.library.interfaces.FlowControlListener;
 import com.revenco.library.others.AppConnectStatus;
 import com.revenco.library.utils.ConvertUtil;
@@ -257,7 +257,7 @@ public class DealHCIEvent {
         XLog.d(TAG, "publicAttrValues() called with: " + "\n"
                 + " attr_Handle = [" + ConvertUtil.byte2HexStrWithSpace(Attr_Handle) + "]," +
                 "\n attr_data = [" + ConvertUtil.byte2HexStrWithSpace(attr_data) + "]");
-        SparseArray<CharBean> charBeanSparseArray = PeripheralService.getCharBeanSparseArray();
+        SparseArray<CharBean> charBeanSparseArray = Helper.charBeanSparseArray;
         for (int i = 0; i < charBeanSparseArray.size(); i++) {
             CharBean charBean = charBeanSparseArray.get(i);
             if (Arrays.equals(charBean.attr_Handle, Attr_Handle)) {//匹配

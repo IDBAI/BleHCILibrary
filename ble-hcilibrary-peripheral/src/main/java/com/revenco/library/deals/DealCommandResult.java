@@ -1,7 +1,7 @@
 package com.revenco.library.deals;
 
 import com.revenco.library.command.AciCommandConfig;
-import com.revenco.library.core.PeripheralService;
+import com.revenco.library.core.Helper;
 import com.revenco.library.interfaces.FlowControlListener;
 import com.revenco.library.others.ConfigProcess;
 import com.revenco.library.others.FlowStatus;
@@ -95,11 +95,11 @@ public class DealCommandResult {
             boolean isOtherError = false;
             switch (status) {
                 case AciCommandConfig.EVENT_BLE_STATUS_SUCCESS:
-                    if (PeripheralService.currentHasConfig == ConfigProcess.config_none) {
+                    if (Helper.currentHasConfig == ConfigProcess.config_none) {
                         XLog.d(TAG, "* config mode  success!");
                         if (listener != null)
                             listener.flowStatusChange(FlowStatus.STATUS_CONFIG_MODE_SUCCESS);
-                    } else if (PeripheralService.currentHasConfig == ConfigProcess.config_mode) {
+                    } else if (Helper.currentHasConfig == ConfigProcess.config_mode) {
                         XLog.d(TAG, "* config public address  success!");
                         if (listener != null)
                             listener.flowStatusChange(FlowStatus.STATUS_CONFIG_PUBADDR_SUCCESS);
