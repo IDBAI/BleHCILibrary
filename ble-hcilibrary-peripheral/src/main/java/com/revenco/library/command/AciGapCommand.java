@@ -23,7 +23,7 @@ public class AciGapCommand {
         buffer[3] = 0x03;//Parameter Total Length
         buffer[4] = AciCommandConfig.Role;
         buffer[5] = AciCommandConfig.privacy_enabled_NO;
-        buffer[6] = 0x10;//Length of the device name characteristic,最多可以设置10个字母长度名称
+        buffer[6] = 0x10;//Length of the device name characteristic,最多可以设置16个字母长度名称
         portListenTask.sendData(OpCode.ACI_GAP_INIT_opCode, buffer);
     }
     //仅仅在广播包中设置Name，测试成功
@@ -173,6 +173,42 @@ public class AciGapCommand {
      * @param portListenTask
      */
     public static void aciGapSetDiscoverable(SerialPortListenTask portListenTask) {
+        XLog.d(TAG, "aciGapSetDiscoverable() called with: portListenTask = [" + portListenTask + "]");
+        int ParameterTotalLength = 30;//21-8 = 13 + 1字节UUIDs = 14 + UUID 16字节
+        byte[] buffer = new byte[3 + 1 + ParameterTotalLength];
+        buffer[0] = AciCommandConfig.HCI_COMMAND_PKT;
+        System.arraycopy(OpCode.ACI_GAP_SET_DISCOVERABLE_opCode, 0, buffer, 1, 2);
+        buffer[3] = (byte) ParameterTotalLength;
+        //
+        buffer[4] = 0x00;//Advertising_Type,0x00 Connectable undirected advertising (ADV_IND) (default)
+        byte[] Advertising_Interval_Min = {(byte) 0x50, 0x00};//0x01E0 300ms
+        byte[] Advertising_Interval_Max = {(byte) 0x50, 0x00};//0x01E0 300ms
+        System.arraycopy(Advertising_Interval_Min, 0, buffer, 5, 2);
+        System.arraycopy(Advertising_Interval_Max, 0, buffer, 7, 2);
+        buffer[9] = 0x00;//Own_Address_Type
+        buffer[10] = 0x00;//Advertising_Filter_Policy
+        //Local_Name_Length
+        buffer[11] = 0x00;
+        //Service_Uuid_length: AD type + UUID length = 17 (0x11)
+        buffer[12] = 0x11;
+        //UUIDs
+        buffer[13] = 0x07;//0x07:Complete list of 128-bit UUIDs available
+        //设置UUID
+        System.arraycopy(PeripharalManager.getInstance().SERVICE_UUID, 0, buffer, 14, 16);
+        //
+        byte[] Slave_Conn_Interval_Min = {0x06, 0x00};
+        byte[] Slave_Conn_Interval_Max = {0x06, 0x00};
+        System.arraycopy(Slave_Conn_Interval_Min, 0, buffer, 30, 2);
+        System.arraycopy(Slave_Conn_Interval_Max, 0, buffer, 32, 2);
+        //send
+        portListenTask.sendData(OpCode.ACI_GAP_SET_DISCOVERABLE_opCode, buffer);
+    }
+
+    /**
+     * ibeacon 规范数据包
+     * @param portListenTask
+     */
+    public static void aciGapSetDiscoverableIBeacon(SerialPortListenTask portListenTask) {
         XLog.d(TAG, "aciGapSetDiscoverable() called with: portListenTask = [" + portListenTask + "]");
         int ParameterTotalLength = 30;//21-8 = 13 + 1字节UUIDs = 14 + UUID 16字节
         byte[] buffer = new byte[3 + 1 + ParameterTotalLength];

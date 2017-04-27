@@ -509,7 +509,7 @@ public class PeripheralService extends Service implements SerialPortStatusDataLi
                     setCharHandlerAndMark(Char_Handle);
                     //再次添加
                     boolean isAddSuccess = startAddChar();
-                    if (!isAddSuccess) {//全部已经被添加了 --> 添加失败,设置广播数据
+                    if (!isAddSuccess) {//全部已经被添加了 --> 添加完成,设置广播数据
                         XLog.d(TAG, "8.0 add 8 个char 成功");
                         //debug
 //                        printCharBean();

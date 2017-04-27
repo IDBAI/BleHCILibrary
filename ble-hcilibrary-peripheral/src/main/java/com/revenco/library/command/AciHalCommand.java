@@ -36,7 +36,7 @@ public class AciHalCommand {
      * @param portListenTask
      */
     public static void writeConfig_PublicAddrData(SerialPortListenTask portListenTask) {
-        XLog.d(TAG, "writeConfig_ModeData() called with: portListenTask = [" + portListenTask + "]");
+        XLog.d(TAG, "writeConfig_PublicAddrData() called with: portListenTask = [" + portListenTask + "]");
         byte[] buffer = new byte[12];
         buffer[0] = AciCommandConfig.HCI_COMMAND_PKT;
         System.arraycopy(OpCode.ACI_HAL_WRITE_CONFIG_DATA_opCode, 0, buffer, 1, 2);

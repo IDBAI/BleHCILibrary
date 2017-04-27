@@ -17,12 +17,13 @@
         android:layout_alignParentTop="true"
         android:layout_marginLeft="11dp"
         android:layout_marginStart="11dp"
-        android:text="HWReset"/>
+        android:text="复位广播"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/HWReset"
+        android:focusable="false"
         android:orientation="horizontal">
 
         <EditText
@@ -71,7 +72,8 @@
         android:layout_marginStart="116dp"
         android:layout_toEndOf="@+id/HWReset"
         android:layout_toRightOf="@+id/HWReset"
-        android:text="Test notify"/>
+        android:text="测试发送通知"
+        android:visibility="gone"/>
 
 
     <TextView

@@ -101,21 +101,25 @@ public class MainActivity extends Activity {
                         //测试显示UI提示
                         TextView textView = (TextView) findViewById(R.id.beanconStatus);
                         currentStatus = (FlowStatus) intent.getSerializableExtra("ACTION");
-                        textView.setText(currentStatus.toString());
+                        textView.setText("当前蓝牙状态：" + currentStatus.toString());
                         if (currentStatus.toString().equalsIgnoreCase(FlowStatus.STATUS_HWRESET_SUCCESS.toString()))
                             starttime = SystemClock.uptimeMillis();
                         if (currentStatus.toString().equalsIgnoreCase(FlowStatus.STATUS_ACI_GAP_SET_DISCOVERABLE_SUCCESS.toString())) {
-                            //开启广播成功，数据分段显示
-                            Editable text = appconnect.getText();
-                            String[] split = text.toString().split("\n");
-                            String appString = split[split.length - 1 == 0 ? 0 : split.length - 1] + "\n" + split[split.length - 2 == -1 ? 0 : split.length - 2] + "\n\n";
-                            appconnect.setText(appString);
-                            //
-                            attrValues.append("\n\n");
-                            String[] split1 = attrValues.getText().toString().split("\n\n");
-                            String valuesatt = split1[split1.length - 1 == 0 ? 0 : split1.length - 1] + "\n" + split1[split1.length - 2 == -1 ? 0 : split1.length - 2] + "\n\n";
-                            attrValues.setText(valuesatt);
-                            //
+                            try {
+                                textView.setText("当前蓝牙状态：广播成功");
+                                //开启广播成功，数据分段显示
+                                Editable text = appconnect.getText();
+                                String[] split = text.toString().split("\n");
+                                String appString = split[split.length - 1 == 0 ? 0 : split.length - 1] + "\n" + split[split.length - 2 == -1 ? 0 : split.length - 2] + "\n\n";
+                                appconnect.setText(appString);
+                                //
+                                attrValues.append("\n\n");
+                                String[] split1 = attrValues.getText().toString().split("\n\n");
+                                String valuesatt = split1[split1.length - 1 == 0 ? 0 : split1.length - 1] + "\n" + split1[split1.length - 2 == -1 ? 0 : split1.length - 2] + "\n\n";
+                                attrValues.setText(valuesatt);
+                                //
+                            } catch (Exception e) {
+                            }
                             if (starttime != -1) {
                                 long jiange = SystemClock.uptimeMillis() - starttime;
                                 resettime.append("reset：" + jiange * 1.0f / 1000 + " 秒!\n");

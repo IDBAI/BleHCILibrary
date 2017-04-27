@@ -178,6 +178,7 @@ public class AciGattCommand {
      * @param STATUS_REASON
      */
     public static void updateCharValues(SerialPortListenTask portListenTask, byte[] service_handler, byte[] char_handle, byte CHAR_NOTIFY_STATUS, byte STATUS_REASON) {
+        XLog.d(TAG, "updateCharValues() called ");
         int paddingLen = 18;//values为20字节，其中 status + reason 占了两位
         int ParameterTotalLength = 8 + paddingLen;
         byte[] buffer = new byte[3 + 1 + ParameterTotalLength];
