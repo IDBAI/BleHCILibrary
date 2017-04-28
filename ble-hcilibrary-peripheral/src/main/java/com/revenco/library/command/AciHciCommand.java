@@ -1,6 +1,7 @@
 package com.revenco.library.command;
 
 import com.revenco.library.core.SerialPortListenTask;
+import com.revenco.library.others.Config;
 import com.revenco.library.utils.XLog;
 
 public class AciHciCommand {
@@ -37,12 +38,12 @@ public class AciHciCommand {
         buffer[0] = AciCommandConfig.HCI_COMMAND_PKT;
         System.arraycopy(OpCode.HCI_LE_SET_SCAN_RESPONSE_DATA_opCode, 0, buffer, 1, 2);
         buffer[3] = (byte) ParameterTotalLength;
-        int Scan_Response_Data_Length = 0;
+        int Scan_Response_Data_Length = Config.DEVICE_NAME.getBytes().length;
         buffer[4] = (byte) Scan_Response_Data_Length;
         //TODO 把service uuid 广播出来-->无效
 //        System.arraycopy(Config.SERVICE_UUID, 0, buffer, 5, 16);
-        //TODO 把 mac 广播出来-->无效
-//        System.arraycopy(Config.BLE_PUBLIC_MAC_ADDRESS, 0, buffer, 21, 6);
+        //TODO 把 name 广播出来-->无效
+        System.arraycopy(Config.DEVICE_NAME.getBytes(), 0, buffer, 5, Config.DEVICE_NAME.getBytes().length);
         //send
         serialPortListenTask.sendData(OpCode.HCI_LE_SET_SCAN_RESPONSE_DATA_opCode, buffer);
     }

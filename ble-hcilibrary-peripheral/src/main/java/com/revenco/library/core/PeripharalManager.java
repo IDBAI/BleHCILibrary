@@ -89,8 +89,8 @@ public class PeripharalManager {
         listenTask = new SerialPortListenTask(context);
         XLog.d(TAG, "1 初始化串口监听");
         //2 启动服务,内部监听了串口数据
-        Intent service = new Intent(context, iBeaconService.class);
-//        Intent service = new Intent(context, PeripheralService.class);
+//        Intent service = new Intent(context, iBeaconService.class);
+        Intent service = new Intent(context, PeripheralService.class);
         context.bindService(service, connect, Service.BIND_AUTO_CREATE);
         XLog.d(TAG, "2 启动服务,内部监听了串口数据");
     }

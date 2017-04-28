@@ -20,7 +20,8 @@ public class Config {
     /**
      *
      */
-    public static final String DEVICE_NAME = "WZBeacon";
+    public static final String DEVICE_NAME = "WZB";
+//    public static final String DEVICE_NAME = "w";
     /**
      * write UUID，硬编码-----------------------start
      */

@@ -516,6 +516,7 @@ public class PeripheralService extends Service implements SerialPortStatusDataLi
             case STATUS_SET_SCAN_RESPONSE_DATA_SUCCESS://11 设置扫描响应数据成功
                 XLog.d(TAG, "10 设置扫描响应数据成功");
                 AciGapCommand.aciGapSetDiscoverable(PeripharalManager.getInstance().getListenTask());
+//                AciGapCommand.aciGapSetDiscoverableForTestName(PeripharalManager.getInstance().getListenTask());
                 break;
             case STATUS_ACI_GAP_SET_DISCOVERABLE_SUCCESS://12 开启广播成功
                 //1、必须要移除app连接的计时

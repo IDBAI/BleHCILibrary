@@ -91,7 +91,9 @@ public class ExampleUnitTest {
     }
     @Test
     public void testbyte(){
-        System.out.println(ConvertUtil.byte2HexStrWithSpace("w".getBytes()));
+//        System.out.println(ConvertUtil.byte2HexStrWithSpace("w".getBytes()));
+        System.out.println(ConvertUtil.byte2HexStrWithSpace("WZ".getBytes()));
+
     }
 
     @Test
