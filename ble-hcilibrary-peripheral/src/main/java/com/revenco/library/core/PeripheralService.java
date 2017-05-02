@@ -502,17 +502,19 @@ public class PeripheralService extends Service implements SerialPortStatusDataLi
 //                        }
                         //方案2 测试不添加描述符
                         AciHciCommand.setBleScanResponseData(PeripharalManager.getInstance().getListenTask());
+//                        AciHciCommand.setBleScanResponseDataForTest(PeripharalManager.getInstance().getListenTask());
                     }
                 }
                 break;
-            case STATUS_ACI_GATT_ADD_CHAR_DESC_SUCCESS:
-                if (datas != null) {
-                    byte[] Char_desc_Handle = datas[0];
-                    XLog.d(TAG, "Char_desc_Handle = " + ConvertUtil.byte2HexStrWithSpace(Char_desc_Handle));
-                }
-                XLog.d(TAG, "9 为 notify 添加描述符成功");
-                AciHciCommand.setBleScanResponseData(PeripharalManager.getInstance().getListenTask());
-                break;
+//            不需要添加描述符
+//            case STATUS_ACI_GATT_ADD_CHAR_DESC_SUCCESS:
+//                if (datas != null) {
+//                    byte[] Char_desc_Handle = datas[0];
+//                    XLog.d(TAG, "Char_desc_Handle = " + ConvertUtil.byte2HexStrWithSpace(Char_desc_Handle));
+//                }
+//                XLog.d(TAG, "9 为 notify 添加描述符成功");
+//                AciHciCommand.setBleScanResponseData(PeripharalManager.getInstance().getListenTask());
+//                break;
             case STATUS_SET_SCAN_RESPONSE_DATA_SUCCESS://11 设置扫描响应数据成功
                 XLog.d(TAG, "10 设置扫描响应数据成功");
                 AciGapCommand.aciGapSetDiscoverable(PeripharalManager.getInstance().getListenTask());
@@ -521,9 +523,7 @@ public class PeripheralService extends Service implements SerialPortStatusDataLi
             case STATUS_ACI_GAP_SET_DISCOVERABLE_SUCCESS://12 开启广播成功
                 //1、必须要移除app连接的计时
                 //2、必须要移除等待指令Reset的计时器
-                XLog.d(TAG, "//1、必须要移除app连接的计时");
                 removeAppConnectTimer();
-                XLog.d(TAG, "//2、必须要移除等待指令Reset的计时器");
                 PeripharalManager.getInstance().sendMsg2Service(MSG_REMOVE_WAITING_TIMER);
                 XLog.d(TAG, "11 开启广播成功");
                 PeripheralService.isIniting = false;
