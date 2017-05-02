@@ -1,5 +1,6 @@
 package com.revenco.ble_hcilibrary_peripheral;
 
+import com.revenco.library.command.AciCommandConfig;
 import com.revenco.library.command.CharacteristicProperty;
 import com.revenco.library.utils.ConvertUtil;
 import com.revenco.library.utils.byteUtils;
@@ -74,6 +75,25 @@ public class ExampleUnitTest {
             System.arraycopy(data, start - 4, destbyte, 0, totalLength);
             System.out.println("destbyte = [" + ConvertUtil.byte2HexStrWithSpace(destbyte) + "]");
         }
+    }
+    
+    @Test
+    public void testRole(){
+
+//        AciCommandConfig.Role_Peripheral;// = 0x01;
+//        AciCommandConfig.Role_Broadcaster;// = 0x02;
+//        AciCommandConfig.Role_Central;// = 0x04;
+//        AciCommandConfig.Role_Observer ;//= 0x08;
+//        AciCommandConfig.Role_ALL ;//= 0x0F;
+
+        int i = AciCommandConfig.Role_Peripheral | AciCommandConfig.Role_Broadcaster | AciCommandConfig.Role_Central |AciCommandConfig.Role_Observer;
+        System.out.println(i);
+    }
+    @Test
+    public void testbyte(){
+//        System.out.println(ConvertUtil.byte2HexStrWithSpace("w".getBytes()));
+        System.out.println(ConvertUtil.byte2HexStrWithSpace("WZ".getBytes()));
+
     }
 
     @Test

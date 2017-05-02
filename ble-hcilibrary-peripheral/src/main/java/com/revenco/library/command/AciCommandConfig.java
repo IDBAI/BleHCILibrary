@@ -20,7 +20,7 @@ public class AciCommandConfig {
     public static final byte LE_Connection_Update_Complete_Sub_event_code = 0x03;
     public static final byte LE_Read_Remote_Used_Features_Complete_Sub_event_code = 0x04;
     public static final byte LE_Long_Term_Key_Request_Event_Sub_event_code = 0x05;
-//	=========================eventCode------start
+    //	=========================eventCode------start
     //	========================= event status------start
 //    0x00: BLE_STATUS_SUCCESS
 //    0x12: ERR_INVALID_HCI_CMD_PARAMS
@@ -81,12 +81,20 @@ public class AciCommandConfig {
 // 0x18 = CONFIG_DATA_IR_OFFSET,
 // 0x2C = LL_WITHOUT_HOST,
 // 0x2D = ROLE
-//
     /**
-     * Role = Peripheral|Broadcaster|Central|Observer
-     * Bitmap of allowed roles: 0x01 : Peripheral 0x02 : Broadcaster 0x04 : Central 0x08 : Observer
+     * Role_ALL = Peripheral|Broadcaster|Central|Observer
+     * Bitmap of allowed roles:
+     * 0x01 : Peripheral
+     * 0x02 : Broadcaster
+     * 0x04 : Central
+     * 0x08 : Observer
      */
-    public static final byte Role = 0x0F;
+    public static final byte Role_Peripheral = 0x01;
+    public static final byte Role_Broadcaster = 0x02;
+    public static final byte Role_Central = 0x04;
+    public static final byte Role_Observer = 0x08;
+    public static final byte Role_ALL = Role_Peripheral | Role_Broadcaster | Role_Central | Role_Observer;//0x0F;
+//
     //    0x00: Privacy is not enabled. 0x01: Privacy is enabled.
     public static final byte privacy_enabled_YES = 0x01;
     public static final byte privacy_enabled_NO = 0x00;
