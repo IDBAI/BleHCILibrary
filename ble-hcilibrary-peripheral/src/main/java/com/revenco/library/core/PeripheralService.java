@@ -78,7 +78,7 @@ public class PeripheralService extends Service implements SerialPortStatusDataLi
     /**
      * 最多发送notify的次数
      */
-    private static final int MAX_NOFITY_TIME = 3;
+    private static final int MAX_NOFITY_TIME = 4;
     /**
      * 暴力等待重置广播事件，等待时间
      */
