@@ -217,7 +217,7 @@ public class AciGapCommand {
         //设置UUID
         System.arraycopy(PeripharalManager.getInstance().SERVICE_UUID, 0, buffer, 14, 16);
         //
-        byte[] Slave_Conn_Interval_Min = {0x06, 0x00};
+        byte[] Slave_Conn_Interval_Min = {0x06, 0x00};//6*1.25 = 7.5ms  16*1.25 = 20ms
         byte[] Slave_Conn_Interval_Max = {0x06, 0x00};
         System.arraycopy(Slave_Conn_Interval_Min, 0, buffer, 30, 2);
         System.arraycopy(Slave_Conn_Interval_Max, 0, buffer, 32, 2);
