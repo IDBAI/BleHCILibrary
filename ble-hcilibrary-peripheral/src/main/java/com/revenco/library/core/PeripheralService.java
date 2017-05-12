@@ -205,6 +205,8 @@ public class PeripheralService extends Service implements SerialPortStatusDataLi
             case AciCommandConfig.HCI_EVENT_PKT:
                 try {
                     parseHCIEventPKT(currentOpCode, data);
+                    //解析了可能存在的多包
+                    parseExitMorePack(currentOpCode, data);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -281,21 +283,7 @@ public class PeripheralService extends Service implements SerialPortStatusDataLi
 //                      04 0F 04 01 01 50 00 size = 7
 //                    04 0F         04  3A 01 06 04                      04 05 04 00 19 08 13 size = 14
                     XLog.e(TAG, "command_status_event !");
-                    try {
-                        CommandOptions.CommandStatusEvent(mhandler, INIT_HW_WHAT, INIT_HW_DELAY, data);
-                        // 尝试解析下一包
-                        int len = data[2];
-                        int totalLen = len + 3;
-                        if (data.length > totalLen) {//后面可能存在其他包
-                            XLog.e(TAG, "解析了可能存在的多包！");
-                            byte[] next = new byte[data.length - totalLen];
-                            System.arraycopy(data, totalLen, next, 0, data.length - totalLen);
-                            parseHCIEventPKT(currentOpCode, next);
-                        }
-                    } catch (Exception e) {//捕获越界异常
-                        e.printStackTrace();
-                        XLog.d(TAG, e.toString());
-                    }
+                    CommandOptions.CommandStatusEvent(mhandler, INIT_HW_WHAT, INIT_HW_DELAY, data);
                     break;
                 case Hardware_Error_Event://do nothing
                     XLog.e(TAG, "hardware_error_event !");
@@ -304,6 +292,25 @@ public class PeripheralService extends Service implements SerialPortStatusDataLi
                     HciVendorEvent(data);
                     break;
             }
+        }
+    }
+
+    /**
+     * .
+     * 解析了可能存在的多包，解析当前包的下一包
+     *
+     * @param currentOpCode
+     * @param data
+     */
+    private void parseExitMorePack(byte[] currentOpCode, byte[] data) {
+        // 尝试解析下一包
+        int len = data[2];
+        int totalLen = len + 3;
+        if (data.length > totalLen) {//后面可能存在其他包
+            XLog.e(TAG, "解析了可能存在的多包！");
+            byte[] next = new byte[data.length - totalLen];
+            System.arraycopy(data, totalLen, next, 0, data.length - totalLen);
+            parseHCIEventPKT(currentOpCode, next);
         }
     }
 

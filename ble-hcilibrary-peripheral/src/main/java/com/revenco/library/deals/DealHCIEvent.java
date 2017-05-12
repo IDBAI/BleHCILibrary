@@ -31,6 +31,14 @@ public class DealHCIEvent {
     /**
      * [0x04,0x3E,0x13, 0x01,    0x00,   0x01,0x08,  0x01,         0x01,    0x92,0xA7,0x22,0xBC,0x92,0x4B,          0x27,0x00,      0x00,0x00,  0xD0,0x07,  0x05]
      *
+     *
+     04 0E 04 01 83 FC 00
+
+     04 3E 13 01 00 10
+
+     08 01 00 D4 4B CB 64 A3 14                         27 00 00 00 D0 07                   05]
+
+     *
      * @param context
      * @param listener
      * @param data     // 0x00 Connection is master
