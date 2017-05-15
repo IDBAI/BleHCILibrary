@@ -205,8 +205,11 @@ public class PeripheralService extends Service implements SerialPortStatusDataLi
             case AciCommandConfig.HCI_EVENT_PKT:
                 try {
                     parseHCIEventPKT(currentOpCode, data);
-                    //解析了可能存在的多包
-                    parseExitMorePack(currentOpCode, data);
+                    //TODO note : 非指令完成事件，即被动接受app的事件，才解析可能存在的多包，否则容易出现逻辑错误，因为
+                    //HCI指令解析完成将触发下一个HCI指令，如果解析了后续的多包，则出现逻辑异常！
+                    if (data[1] != Command_Complete_Event) {
+                        parseExitMorePack(currentOpCode, data);
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -437,6 +440,8 @@ public class PeripheralService extends Service implements SerialPortStatusDataLi
             DealCommandResult.dealGattUpdateCharValResult(this, currentOpCode, paramContent);
         } else {
             XLog.e(TAG, "error!check it!");
+            //修复
+            this.flowStatusChange(FlowStatus.STATUS_RESETHW_INIT);
         }
     }
 

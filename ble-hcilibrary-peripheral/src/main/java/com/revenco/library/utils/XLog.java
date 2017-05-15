@@ -87,9 +87,9 @@ public class XLog {
     }
 
     public static synchronized void writeLog2File(String tag, String text) {
-        String LOG_PATH = Environment.getExternalStorageDirectory() + "/_xlog/";
+        String LOG_PATH = Environment.getExternalStorageDirectory() + "/_hci/";
         final String LOG_FILE_NAME = "_log.txt";
-        final SimpleDateFormat contentPrefix = new SimpleDateFormat("yyyy-MM-dd-HH HH:mm:ss.sss");
+        final SimpleDateFormat contentPrefix = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.sss");
         final SimpleDateFormat logFileName = new SimpleDateFormat("yyyy-MM-dd-HH");
         Date date = new Date();
         String fullPathName = LOG_PATH + logFileName.format(date).trim() + LOG_FILE_NAME;
