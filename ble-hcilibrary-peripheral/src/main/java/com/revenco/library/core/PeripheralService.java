@@ -77,7 +77,7 @@ public class PeripheralService extends Service implements SerialPortStatusDataLi
     /**
      * 使用indicate属性
      */
-    private static final byte NOFITY_PROPERTIES = CharacteristicProperty.PROPERTY_INDICATE | CharacteristicProperty.PROPERTY_NOTIFY;
+    private static final byte NOFITY_PROPERTIES = CharacteristicProperty.PROPERTY_INDICATE | CharacteristicProperty.PROPERTY_NOTIFY | CharacteristicProperty.PROPERTY_READ;
     /**
      * 最多发送notify的次数
      */
