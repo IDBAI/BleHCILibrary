@@ -58,6 +58,7 @@ public class CommandOptions {
      * //                      04 0F 04 01 01 50 00 size = 7
      * <p>
      * 解析指令的状态
+     * 04 0F 04 00 01 81 FD size = 7
      *
      * @param mhandler
      * @param what
@@ -83,6 +84,15 @@ public class CommandOptions {
             XLog.d(TAG, "* hci disconnect success! ");
             XLog.d(TAG, "断开连接指令状态成功");
             XLog.d(TAG, "等待断开指令返回！");
+        } else if (Arrays.equals(opCode, OpCode.Aci_L2CAP_Connection_Parameter_Update_Request_opCode)) {
+            if (status == 0) {
+                XLog.e(TAG, "请求更新参数成功！");
+            } else {
+                XLog.e(TAG, "请求更新参数失败！");
+            }
+            //返回，不能执行reset计时
+            //不影响后续通讯
+            return;
         } else {
             XLog.e(TAG, "// TODO: 2017/3/14 当做异常，暴力复位 ");
         }

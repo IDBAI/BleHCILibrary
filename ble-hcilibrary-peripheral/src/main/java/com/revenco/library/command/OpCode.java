@@ -35,6 +35,10 @@ public class OpCode {
     public static final byte[] HCI_LE_SET_SCAN_RESPONSE_DATA_opCode = {(byte) 0x09, (byte) 0x20};
     //开启广播
     public static final byte[] ACI_GAP_SET_DISCOVERABLE_opCode = {(byte) 0x83, (byte) 0xFC};
+    //更新连接参数请求
+    public static final byte[] Aci_L2CAP_Connection_Parameter_Update_Request_opCode = {(byte) 0x81, (byte) 0xFD};
+    //更新连接参数请求回应
+    public static final byte[] Aci_L2CAP_Connection_Parameter_Update_Response_opCode = {(byte) 0x82, (byte) 0xFD};
     /**
      * 更新广播数据,用于iBeacon 基站开发模式
      */
@@ -43,4 +47,5 @@ public class OpCode {
      * 用于iBeacon 基站开发模式
      */
     public static final byte[] ACI_GAP_DELETE_AD_TYPE_opCode = {(byte) 0x8F, (byte) 0xFC};
+
 }

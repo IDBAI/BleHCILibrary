@@ -423,6 +423,7 @@ public class DealCommandResult {
             }
         }
     }
+
     public static void dealAciGapUpdateADVData(FlowControlListener listener, byte[] currentOpCode, byte[] paramContent) {
         byte[] opcode = new byte[2];
         System.arraycopy(paramContent, 1, opcode, 0, 2);//第0位为：Num_HCI_Command_Packets
@@ -487,6 +488,31 @@ public class DealCommandResult {
                 XLog.e(TAG, "* aci gatt add char desc failed,reset HW again!");
                 if (listener != null)
                     listener.flowStatusChange(FlowStatus.STATUS_RESETHW_INIT);
+            }
+        }
+    }
+
+    /**
+     * @param listener
+     * @param currentOpCode 82 FD
+     * @param paramContent  01 82 FD 12
+     */
+    public static void dealL2CAPVal(FlowControlListener listener, byte[] currentOpCode, byte[] paramContent) {
+        XLog.d(TAG, "dealL2CAPVal() 更新参数反馈响应!--> 结果可以不处理! ");
+        byte[] opcode = new byte[2];
+        System.arraycopy(paramContent, 1, opcode, 0, 2);//第0位为：Num_HCI_Command_Packets
+        if (Arrays.equals(opcode, currentOpCode)) {
+            byte status = paramContent[3];
+            switch (status) {
+                case 0x00:
+                    XLog.d(TAG, "BLE_STATUS_SUCCESS");
+                    break;
+                case 0x12:
+                    XLog.e(TAG, "BLE_STATUS_INVALID_PARAMETER");
+                    break;
+                case 0x0C:
+                    XLog.e(TAG, "ERR_COMMAND_DISALLOWED");
+                    break;
             }
         }
     }

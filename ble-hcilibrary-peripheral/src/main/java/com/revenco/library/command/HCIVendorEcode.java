@@ -27,6 +27,9 @@ public class HCIVendorEcode {
 
     public static final byte[] EVT_BLUE_GATT_PROCEDURE_TIMEOUT_Ecode = {0x02,0x0C};
 
+    //
+    public static final byte[] EVT_BLUE_L2CAP_CONN_UPDATE_RESP_Ecode = {0x00,0x08};
+
 
 //    0x00: BLE_STATUS_SUCCESS
 //    0x41: BLE_STATUS_FAILED

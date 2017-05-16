@@ -106,6 +106,8 @@ public class PeripheralService extends Service implements SerialPortStatusDataLi
             Config.CHAR_UUID_WRITE_06
     };
     private byte[] connection_handle;
+    private byte identifier;
+    private byte isAccept;
     private Handler mhandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
@@ -334,6 +336,8 @@ public class PeripheralService extends Service implements SerialPortStatusDataLi
     }
 
     /**
+     * 解析厂商特定包
+     *
      * @param data 完整单包
      */
     private void ParseHciVendorEvent(byte[] data) {
@@ -361,6 +365,10 @@ public class PeripheralService extends Service implements SerialPortStatusDataLi
             XLog.e(TAG, "evt_blue_gatt_procedure_timeout_ecode");
             //准备断开连接
             this.flowStatusChange(FlowStatus.STATUS_HCI_READY_DISCONNECT);
+        }
+        //请求更新参数返回
+        else if (Arrays.equals(Ecode, HCIVendorEcode.EVT_BLUE_L2CAP_CONN_UPDATE_RESP_Ecode)) {
+            this.flowStatusChange(FlowStatus.STATUS_L2CAP_CONN_UPDATE_RESP, data);
         } else {
             XLog.e(TAG, "请解析其他事件！data：" + ConvertUtil.byte2HexStrWithSpace(data));
         }
@@ -438,6 +446,10 @@ public class PeripheralService extends Service implements SerialPortStatusDataLi
         //12、notify
         else if (Arrays.equals(currentOpCode, OpCode.ACI_GATT_UPD_CHAR_VAL_opCode)) {
             DealCommandResult.dealGattUpdateCharValResult(this, currentOpCode, paramContent);
+        }
+        // 更新参数反馈响应
+        else if (Arrays.equals(currentOpCode, OpCode.Aci_L2CAP_Connection_Parameter_Update_Response_opCode)) {
+            DealCommandResult.dealL2CAPVal(this, currentOpCode, paramContent);
         } else {
             XLog.e(TAG, "error!check it!");
             //修复
@@ -574,10 +586,28 @@ public class PeripheralService extends Service implements SerialPortStatusDataLi
                     }
                 }
                 break;
+            case STATUS_L2CAP_CONN_UPDATE_RESP:
+                try {
+                    setResponse(datas[0]);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                break;
         }
         Intent intent = new Intent(ACTON_FLOWCONTROL_STATUS);
         intent.putExtra("ACTION", status);
         sendBroadcast(intent);
+    }
+
+    private void setResponse(byte[] data) throws Exception {
+        byte Parameter_Total_Length = data[2];
+        byte[] connect_handle = new byte[2];
+        System.arraycopy(data, 5, connect_handle, 0, 2); // 5 6
+        byte Event_Data_Length = data[7];
+        byte Code = data[8];
+        identifier = data[9];
+        byte L2CAP_Length = data[10];
+        isAccept = data[11];
     }
 
     @Override
@@ -588,6 +618,7 @@ public class PeripheralService extends Service implements SerialPortStatusDataLi
         if (connectBean.status == AppConnectStatus.status_connected) {
             XLog.d(TAG, "开始" + Config.CONNECT_MAX_TIME + "ms计时！");
             mhandler.sendEmptyMessageDelayed(APP_CONNECT_WHAT, Config.CONNECT_MAX_TIME);
+        } else if (connectBean.status == AppConnectStatus.status_connect_update) {
         }
         Intent intent = new Intent(ACTION_APP_CONNECT_STATUS);
         intent.putExtra(EXTRA_APPBEAN, connectBean);

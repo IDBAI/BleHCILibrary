@@ -321,4 +321,6 @@ public class DealHCIEvent {
         byte[] data_buffer = new byte[data_len];
         System.arraycopy(data, 8, data_buffer, 0, data_len);
     }
+
+
 }

@@ -132,7 +132,8 @@ public class SerialPortListenTask extends android.os.AsyncTask<Void, byte[], Boo
                             if (len > 0) {
                                 byte[] temp = new byte[len];
                                 System.arraycopy(buffer, 0, temp, 0, len);
-                                XLog.d(TAG, "<<<------------ ：" + ConvertUtil.byte2HexStrWithSpace(temp) + " size = " + temp.length);
+                                XLog.i(TAG, "reveive size = " + temp.length);
+                                XLog.i(TAG, "<<<------------ ：" + ConvertUtil.byte2HexStrWithSpace(temp));
                                 //TODO
                                 publicBleData(temp);
                             }
@@ -215,8 +216,8 @@ public class SerialPortListenTask extends android.os.AsyncTask<Void, byte[], Boo
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            XLog.i(TAG, "------------>>> send data length: " + data.length);
-            XLog.d(TAG, ConvertUtil.byte2HexStrWithSpace(data));
+            XLog.i(TAG, "send size = " + data.length);
+            XLog.i(TAG, "------------>>> ：" + ConvertUtil.byte2HexStrWithSpace(data));
         }
     }
 

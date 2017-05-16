@@ -64,6 +64,29 @@ public class AciCommandConfig {
     public static final byte En_High_Power_ON = 0x01;
     public static final byte En_High_Power_OFF = 0x00;
 //	========================= En_High_Power------end
+    /**
+     * 连接参数 -> 以下的连接参数符合了IOS规范
+     * <p>
+     * <p>
+     * Supervision Timeout 以10ms为单位，取值范围10（100ms）-3200(32s)。
+     * <p>
+     * iOS app连接时，apple公司有自己的规范，这三个参数的设置必须在其规范内才可生效：
+     * ● Interval Max * (Slave Latency + 1) ≤ 2 seconds     : 40 * ( 0+1) = 40 ms ≤ 2s
+     * ● Interval Min ≥ 20 ms                              : 20ms ≥ 20 ms
+     * ● Interval Min + 20 ms ≤ Interval Max               :20+20 = 40 ms  ≤ 40 ms
+     * ● Slave Latency ≤ 4                                  :0  ≤ 4
+     * ● connSupervisionTimeout ≤ 6 seconds                 :100 ms ≤ 6 s
+     * ● Interval Max * (Slave Latency + 1) * 3 < connSupervisionTimeout        : 40*(0+1)*3 = 120 ms < 130 ms
+     */
+    // 0x0010 -> 16*1.25 = 20ms
+    public static final byte[] Slave_Conn_Interval_Min = {0x10, 0x00};
+    // 0x0020 -> 32 * 1.25 = 40ms
+    public static final byte[] Slave_Conn_Interval_Max = {0x20, 0x00};
+    //
+    public static final byte[] Slave_Latency = {0x00, 0x00};
+    //0x000D -> 13 * 10 = 130 ms
+    public static final byte[] Timeout_multiplier = {0x0D, 0x00};
+    //
 //If En_High_Power=0
 // 0 = -18 dBm, 1 = -15 dBm, 2 = -12 dBm,
 // 3 = -9 dBm, 4 = -6 dBm, 5 = -2 dBm,
@@ -94,7 +117,7 @@ public class AciCommandConfig {
     public static final byte Role_Central = 0x04;
     public static final byte Role_Observer = 0x08;
     public static final byte Role_ALL = Role_Peripheral | Role_Broadcaster | Role_Central | Role_Observer;//0x0F;
-//
+    //
     //    0x00: Privacy is not enabled. 0x01: Privacy is enabled.
     public static final byte privacy_enabled_YES = 0x01;
     public static final byte privacy_enabled_NO = 0x00;
