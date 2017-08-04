@@ -12,6 +12,7 @@ import android.util.Log;
 
 import com.revenco.aidllibrary.AppConnectBean;
 import com.revenco.aidllibrary.CommonUtils.AppConnectStatus;
+import com.revenco.aidllibrary.CommonUtils.Constants;
 import com.revenco.aidllibrary.CommonUtils.ConvertUtil;
 import com.revenco.aidllibrary.CommonUtils.FlowStatus;
 import com.revenco.aidllibrary.CommonUtils.Helper;
@@ -86,7 +87,7 @@ public class HCIServiceAidlInterfaceImp extends Service {
             public void onReceive(Context context, Intent intent) {
                 switch (intent.getAction()) {
                     case Helper.ACTION_APP_CONNECT_STATUS:
-                        connectBean = (AppConnectBean) intent.getSerializableExtra(Helper.EXTRA_APPBEAN);
+                        connectBean = (AppConnectBean) intent.getParcelableExtra(Helper.EXTRA_APPBEAN);
                         Log.d(TAG, connectBean.toString());
                         if (connectBean.status == AppConnectStatus.status_connected) {
                             System.out.println("app开始连接开始计时");
@@ -103,7 +104,7 @@ public class HCIServiceAidlInterfaceImp extends Service {
                         break;
                     case Helper.ACTON_FLOWCONTROL_STATUS:
                         //测试显示UI提示
-                        currentStatus = (FlowStatus) intent.getSerializableExtra("ACTION");
+                        currentStatus = (FlowStatus) intent.getSerializableExtra(Constants.ACTON_FLOWCONTROL_STATUS_VALUES);
                         if (currentStatus.toString().equalsIgnoreCase(FlowStatus.STATUS_HWRESET_SUCCESS.toString()))
                             starttime = SystemClock.uptimeMillis();
                         if (currentStatus.toString().equalsIgnoreCase(FlowStatus.STATUS_ACI_GAP_SET_DISCOVERABLE_SUCCESS.toString())) {

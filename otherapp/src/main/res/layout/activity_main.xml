@@ -94,5 +94,15 @@
         android:layout_toEndOf="@+id/Test"
         android:layout_toRightOf="@+id/Test"
         android:text="清屏"/>
+    <Button
+        android:id="@+id/exitbtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="40dp"
+        android:layout_marginStart="140dp"
+        android:layout_toEndOf="@+id/Test"
+        android:layout_toRightOf="@+id/Test"
+        android:text="退出"/>
 
 </RelativeLayout>

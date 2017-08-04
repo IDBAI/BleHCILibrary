@@ -14,6 +14,7 @@ import com.revenco.aidllibrary.AppConnectBean;
 import com.revenco.aidllibrary.CharBean;
 import com.revenco.aidllibrary.CommonUtils.AppConnectStatus;
 import com.revenco.aidllibrary.CommonUtils.ConfigProcess;
+import com.revenco.aidllibrary.CommonUtils.Constants;
 import com.revenco.aidllibrary.CommonUtils.ConvertUtil;
 import com.revenco.aidllibrary.CommonUtils.FlowStatus;
 import com.revenco.aidllibrary.CommonUtils.Utils;
@@ -201,7 +202,7 @@ public class PeripheralService extends Service implements SerialPortStatusDataLi
      * @param data          数据为原始数据
      */
     private synchronized void ParseData(byte[] currentOpCode, byte[] data) {
-        XLog.d(TAG, "ParseData() called with: currentOpCode = [" + currentOpCode + "], data = [" + data + "]");
+        XLog.d(TAG, "ParseData() called with: currentOpCode = [" + ConvertUtil.byte2HexStrWithSpace(currentOpCode) + "], data = [" + ConvertUtil.byte2HexStrWithSpace(data) + "]");
         byte serailFlag = data[0];
         switch (serailFlag) {
             case AciCommandConfig.HCI_EVENT_PKT:
@@ -232,6 +233,9 @@ public class PeripheralService extends Service implements SerialPortStatusDataLi
                             this.flowStatusChange(FlowStatus.STATUS_RESETHW_INIT);
                         }
                         break;
+                    } else if (i == data.length - 1) {
+                        //遍历到最后一个，仍然不为0x04
+                        this.flowStatusChange(FlowStatus.STATUS_RESETHW_INIT);
                     }
                 }
                 break;
@@ -595,7 +599,7 @@ public class PeripheralService extends Service implements SerialPortStatusDataLi
                 break;
         }
         Intent intent = new Intent(ACTON_FLOWCONTROL_STATUS);
-        intent.putExtra("ACTION", status);
+        intent.putExtra(Constants.ACTON_FLOWCONTROL_STATUS_VALUES, status);
         sendBroadcast(intent);
     }
 

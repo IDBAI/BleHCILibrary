@@ -12,4 +12,8 @@ public class Constants {
      * 启动服务的ACTION
      */
     public static final String SERVICE_START_ACTION = "com.revenco.library.SERVICE_START_ACTION";
+    /**
+     * 流程控制状态的值
+     */
+    public static final String ACTON_FLOWCONTROL_STATUS_VALUES = "com.revenco.library.ACTON_FLOWCONTROL_STATUS_VALUES";
 }

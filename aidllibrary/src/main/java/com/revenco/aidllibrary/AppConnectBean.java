@@ -37,14 +37,7 @@ public class AppConnectBean implements Parcelable {
     public AppConnectStatus status;
 
     protected AppConnectBean(Parcel in) {
-        appMac = in.readString();
-        Connection_Handle = in.createByteArray();
-        Role = in.readByte();
-        Peer_Address_Type = in.readByte();
-        Conn_Interval = in.createByteArray();
-        Conn_Latency = in.createByteArray();
-        Supervision_Timeout = in.createByteArray();
-        Master_Clock_Accuracy = in.readByte();
+        readFromParcel(in);
     }
 
     public AppConnectBean(String appMac, byte[] connection_Handle, byte role, byte peer_Address_Type, byte[] conn_Interval, byte[] conn_Latency, byte[] supervision_Timeout, byte master_Clock_Accuracy, AppConnectStatus status) {

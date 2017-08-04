@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
             public void onReceive(Context context, Intent intent) {
                 switch (intent.getAction()) {
                     case Helper.ACTION_APP_CONNECT_STATUS:
-                        connectBean = (AppConnectBean) intent.getSerializableExtra(Helper.EXTRA_APPBEAN);
+                        connectBean = intent.getParcelableExtra(Helper.EXTRA_APPBEAN);
                         appconnect.append(connectBean.toTestString() + "\n");
                         appconnect.scrollTo(0, 1000);
                         XLog.d(TAG, connectBean.toString());
@@ -99,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
                     case Helper.ACTON_FLOWCONTROL_STATUS:
                         //测试显示UI提示
                         TextView textView = (TextView) findViewById(R.id.beanconStatus);
-                        currentStatus = (FlowStatus) intent.getSerializableExtra("ACTION");
+                        currentStatus = (FlowStatus) intent.getSerializableExtra(Constants.ACTON_FLOWCONTROL_STATUS_VALUES);
                         textView.setText("当前蓝牙状态：" + currentStatus.toString());
                         if (currentStatus.toString().equalsIgnoreCase(FlowStatus.STATUS_HWRESET_SUCCESS.toString()))
                             starttime = SystemClock.uptimeMillis();
@@ -184,6 +184,12 @@ public class MainActivity extends AppCompatActivity {
                 resettime.setText("");
             }
         });
+        findViewById(R.id.exitbtn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MainActivity.this.finish();
+            }
+        });
     }
 
     public IntentFilter getIntentFilter() {
@@ -197,14 +203,17 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        unregisterReceiver(receive);
         Tools.releaseWakeLock();
+        if (receive != null)
+            unregisterReceiver(receive);
         if (HCIbinder != null)
             try {
                 HCIbinder.destory();
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
+        if (connect != null)
+            unbindService(connect);
     }
 
     private void initbindService() {

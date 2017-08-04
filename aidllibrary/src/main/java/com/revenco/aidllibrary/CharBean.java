@@ -1,5 +1,8 @@
 package com.revenco.aidllibrary;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.revenco.aidllibrary.CommonUtils.ConvertUtil;
 
 /**
@@ -9,7 +12,7 @@ import com.revenco.aidllibrary.CommonUtils.ConvertUtil;
  * <p>CLASS DESCRIBE :自定义的特征值实体类</p>
  * <p>CLASS_VERSION : 1.0.0</p>
  */
-public class CharBean {
+public class CharBean implements Parcelable{
     /**
      * 是否已经被设置，设置成功之后赋值为TRUE
      */
@@ -59,4 +62,40 @@ public class CharBean {
                 ", attr_Handle=" + ConvertUtil.byte2HexStrWithoutSpace(attr_Handle) +
                 '}';
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeByte(this.hasSetting ? (byte) 1 : (byte) 0);
+        dest.writeByteArray(this.char_uuid);
+        dest.writeByte(this.char_prop);
+        dest.writeByteArray(this.service_handler);
+        dest.writeByteArray(this.char_handle);
+        dest.writeByteArray(this.attr_Handle);
+    }
+
+    protected CharBean(Parcel in) {
+        this.hasSetting = in.readByte() != 0;
+        this.char_uuid = in.createByteArray();
+        this.char_prop = in.readByte();
+        this.service_handler = in.createByteArray();
+        this.char_handle = in.createByteArray();
+        this.attr_Handle = in.createByteArray();
+    }
+
+    public static final Creator<CharBean> CREATOR = new Creator<CharBean>() {
+        @Override
+        public CharBean createFromParcel(Parcel source) {
+            return new CharBean(source);
+        }
+
+        @Override
+        public CharBean[] newArray(int size) {
+            return new CharBean[size];
+        }
+    };
 }
