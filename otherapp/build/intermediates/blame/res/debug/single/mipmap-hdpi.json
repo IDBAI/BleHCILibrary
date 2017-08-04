@@ -1,0 +1,10 @@
+[
+    {
+        "merged": "D:\\AndroidWorkSpace\\StudioWork\\BleHCILibrary\\otherapp\\build\\intermediates\\res\\merged\\debug\\mipmap-hdpi\\ic_launcher.png",
+        "source": "D:\\AndroidWorkSpace\\StudioWork\\BleHCILibrary\\otherapp\\src\\main\\res\\mipmap-hdpi\\ic_launcher.png"
+    },
+    {
+        "merged": "D:\\AndroidWorkSpace\\StudioWork\\BleHCILibrary\\otherapp\\build\\intermediates\\res\\merged\\debug\\mipmap-hdpi\\hci_client.png",
+        "source": "D:\\AndroidWorkSpace\\StudioWork\\BleHCILibrary\\otherapp\\src\\main\\res\\mipmap-hdpi\\hci_client.png"
+    }
+]
