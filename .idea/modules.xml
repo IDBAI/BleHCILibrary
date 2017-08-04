@@ -3,10 +3,10 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/BleHCILibrary.iml" filepath="$PROJECT_DIR$/BleHCILibrary.iml" />
+      <module fileurl="file://$PROJECT_DIR$/HciClient/HciClient.iml" filepath="$PROJECT_DIR$/HciClient/HciClient.iml" />
+      <module fileurl="file://$PROJECT_DIR$/HciService/HCIService.iml" filepath="$PROJECT_DIR$/HciService/HCIService.iml" />
       <module fileurl="file://$PROJECT_DIR$/aidllibrary/aidllibrary.iml" filepath="$PROJECT_DIR$/aidllibrary/aidllibrary.iml" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/ble-hcilibrary-peripheral/ble-hcilibrary-peripheral.iml" filepath="$PROJECT_DIR$/ble-hcilibrary-peripheral/ble-hcilibrary-peripheral.iml" />
-      <module fileurl="file://$PROJECT_DIR$/otherapp/otherapp.iml" filepath="$PROJECT_DIR$/otherapp/otherapp.iml" />
     </modules>
   </component>
 </project>

@@ -1,1 +1,1 @@
-include ':app', ':ble-hcilibrary-peripheral', ':aidllibrary', ':otherapp'
+include ':HciService', ':ble-hcilibrary-peripheral', ':aidllibrary', ':HciClient'
