@@ -5,10 +5,10 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
 
-import com.revenco.library.interfaces.SerialPortStatusDataListener;
+import com.revenco.aidllibrary.CommonUtils.ConvertUtil;
+import com.revenco.aidllibrary.CommonUtils.XLog;
+import com.revenco.aidllibrary.interfaces.SerialPortStatusDataListener;
 import com.revenco.library.others.Config;
-import com.revenco.library.utils.ConvertUtil;
-import com.revenco.library.utils.XLog;
 
 import java.io.File;
 import java.io.IOException;

@@ -3,28 +3,22 @@
           package="com.revenco.library">
 
     <application
-        android:name="com.revenco.library.MyApplication"
+        android:name=".HCIServiceApplication"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/hci_service"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity
-            android:name="com.revenco.library.MainActivity"
-            android:windowSoftInputMode="stateHidden|stateUnchanged">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
 
-                <category android:name="android.intent.category.LAUNCHER"/>
-            </intent-filter>
-        </activity>
 
         <service
-            android:name="com.revenco.library.core.PeripheralService"
+            android:name=".HCIServiceAidlInterfaceImp"
             android:enabled="true"
-            android:exported="false">
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.revenco.library.SERVICE_START_ACTION"/>
+            </intent-filter>
         </service>
-
     </application>
 
 </manifest>

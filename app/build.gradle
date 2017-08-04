@@ -4,7 +4,7 @@ android {
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
     defaultConfig {
-        applicationId "com.revenco.blehcilibrary"
+        applicationId 'com.revenco.videointercom.hciservice'
         minSdkVersion 14
         targetSdkVersion 25
         versionCode 1
@@ -17,7 +17,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    productFlavors {
+    }
 }
+
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
@@ -29,4 +32,5 @@ dependencies {
     compile project(':ble-hcilibrary-peripheral')
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.6-SNAPSHOT'
     releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.6-SNAPSHOT'
+    compile project(':aidllibrary')
 }

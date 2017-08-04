@@ -3,16 +3,16 @@ package com.revenco.library.deals;
 import android.content.Context;
 import android.util.SparseArray;
 
-import com.revenco.library.Bean.AppConnectBean;
-import com.revenco.library.Bean.CharBean;
+import com.revenco.aidllibrary.AppConnectBean;
+import com.revenco.aidllibrary.CharBean;
+import com.revenco.aidllibrary.CommonUtils.AppConnectStatus;
+import com.revenco.aidllibrary.CommonUtils.ConvertUtil;
+import com.revenco.aidllibrary.CommonUtils.Helper;
+import com.revenco.aidllibrary.CommonUtils.Tools;
+import com.revenco.aidllibrary.CommonUtils.XLog;
+import com.revenco.aidllibrary.interfaces.FlowControlListener;
 import com.revenco.library.command.AciCommandConfig;
 import com.revenco.library.command.HCIVendorEcode;
-import com.revenco.library.core.Helper;
-import com.revenco.library.interfaces.FlowControlListener;
-import com.revenco.library.others.AppConnectStatus;
-import com.revenco.library.utils.ConvertUtil;
-import com.revenco.library.utils.Tools;
-import com.revenco.library.utils.XLog;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,14 +30,13 @@ public class DealHCIEvent {
 
     /**
      * [0x04,0x3E,0x13, 0x01,    0x00,   0x01,0x08,  0x01,         0x01,    0x92,0xA7,0x22,0xBC,0x92,0x4B,          0x27,0x00,      0x00,0x00,  0xD0,0x07,  0x05]
-     *
-     *
-     04 0E 04 01 83 FC 00
-
-     04 3E 13 01 00 10
-
-     08 01 00 D4 4B CB 64 A3 14                         27 00 00 00 D0 07                   05]
-
+     * <p>
+     * <p>
+     * 04 0E 04 01 83 FC 00
+     * <p>
+     * 04 3E 13 01 00 10
+     * <p>
+     * 08 01 00 D4 4B CB 64 A3 14                         27 00 00 00 D0 07                   05]
      *
      * @param context
      * @param listener
@@ -321,6 +320,4 @@ public class DealHCIEvent {
         byte[] data_buffer = new byte[data_len];
         System.arraycopy(data, 8, data_buffer, 0, data_len);
     }
-
-
 }

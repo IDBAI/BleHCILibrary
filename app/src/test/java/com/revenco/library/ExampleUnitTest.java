@@ -1,8 +1,8 @@
 package com.revenco.library;
 
+import com.revenco.aidllibrary.CommonUtils.ConvertUtil;
+import com.revenco.aidllibrary.CommonUtils.byteUtils;
 import com.revenco.library.command.CharacteristicProperty;
-import com.revenco.library.utils.ConvertUtil;
-import com.revenco.library.utils.byteUtils;
 
 import org.junit.Test;
 

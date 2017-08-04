@@ -1,1 +1,1 @@
-include ':app', ':ble-hcilibrary-peripheral'
+include ':app', ':ble-hcilibrary-peripheral', ':aidllibrary', ':otherapp'

@@ -1,9 +1,9 @@
 package com.revenco.ble_hcilibrary_peripheral;
 
+import com.revenco.aidllibrary.CommonUtils.ConvertUtil;
+import com.revenco.aidllibrary.CommonUtils.byteUtils;
 import com.revenco.library.command.AciCommandConfig;
 import com.revenco.library.command.CharacteristicProperty;
-import com.revenco.library.utils.ConvertUtil;
-import com.revenco.library.utils.byteUtils;
 
 import org.junit.Test;
 

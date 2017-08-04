@@ -1,8 +1,8 @@
 package com.revenco.library.command;
 
+import com.revenco.aidllibrary.CommonUtils.XLog;
 import com.revenco.library.core.SerialPortListenTask;
 import com.revenco.library.others.Config;
-import com.revenco.library.utils.XLog;
 
 public class AciHciCommand {
     private static final String TAG = "AciHciCommand";

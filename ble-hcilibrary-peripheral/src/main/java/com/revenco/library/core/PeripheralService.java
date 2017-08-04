@@ -10,8 +10,17 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.SparseArray;
 
-import com.revenco.library.Bean.AppConnectBean;
-import com.revenco.library.Bean.CharBean;
+import com.revenco.aidllibrary.AppConnectBean;
+import com.revenco.aidllibrary.CharBean;
+import com.revenco.aidllibrary.CommonUtils.AppConnectStatus;
+import com.revenco.aidllibrary.CommonUtils.ConfigProcess;
+import com.revenco.aidllibrary.CommonUtils.ConvertUtil;
+import com.revenco.aidllibrary.CommonUtils.FlowStatus;
+import com.revenco.aidllibrary.CommonUtils.Utils;
+import com.revenco.aidllibrary.CommonUtils.XLog;
+import com.revenco.aidllibrary.CommonUtils.byteUtils;
+import com.revenco.aidllibrary.interfaces.FlowControlListener;
+import com.revenco.aidllibrary.interfaces.SerialPortStatusDataListener;
 import com.revenco.library.command.AciCommandConfig;
 import com.revenco.library.command.AciGapCommand;
 import com.revenco.library.command.AciGattCommand;
@@ -22,23 +31,28 @@ import com.revenco.library.command.HCIVendorEcode;
 import com.revenco.library.command.OpCode;
 import com.revenco.library.deals.DealCommandResult;
 import com.revenco.library.deals.DealHCIEvent;
-import com.revenco.library.interfaces.FlowControlListener;
-import com.revenco.library.interfaces.SerialPortStatusDataListener;
-import com.revenco.library.others.AppConnectStatus;
 import com.revenco.library.others.AttrOrder;
 import com.revenco.library.others.CommandOptions;
 import com.revenco.library.others.Config;
-import com.revenco.library.others.ConfigProcess;
-import com.revenco.library.others.FlowStatus;
-import com.revenco.library.utils.ConvertUtil;
-import com.revenco.library.utils.Utils;
-import com.revenco.library.utils.XLog;
-import com.revenco.library.utils.byteUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import static com.revenco.aidllibrary.CommonUtils.ConfigProcess.config_mode;
+import static com.revenco.aidllibrary.CommonUtils.ConfigProcess.config_publicAddress;
+import static com.revenco.aidllibrary.CommonUtils.Helper.ACTION_APP_CONNECT_STATUS;
+import static com.revenco.aidllibrary.CommonUtils.Helper.ACTION_REVEIVE_ATTRIBUTE_VALUES;
+import static com.revenco.aidllibrary.CommonUtils.Helper.ACTON_FLOWCONTROL_STATUS;
+import static com.revenco.aidllibrary.CommonUtils.Helper.CHAR_SET_SIZE;
+import static com.revenco.aidllibrary.CommonUtils.Helper.EXTRA_APPBEAN;
+import static com.revenco.aidllibrary.CommonUtils.Helper.EXTRA_APPMAC;
+import static com.revenco.aidllibrary.CommonUtils.Helper.EXTRA_CHAR_UUID;
+import static com.revenco.aidllibrary.CommonUtils.Helper.EXTRA_CHAR_VALUES;
+import static com.revenco.aidllibrary.CommonUtils.Helper.MSG_REMOVE_WAITING_TIMER;
+import static com.revenco.aidllibrary.CommonUtils.Helper.MSG_TEST_SEND_NOTIFY;
+import static com.revenco.aidllibrary.CommonUtils.Helper.charBeanSparseArray;
+import static com.revenco.aidllibrary.CommonUtils.Helper.currentHasConfig;
 import static com.revenco.library.command.AciCommandConfig.Command_Complete_Event;
 import static com.revenco.library.command.AciCommandConfig.Command_Status_Event;
 import static com.revenco.library.command.AciCommandConfig.Disconnect_Complete;
@@ -50,20 +64,6 @@ import static com.revenco.library.command.AciCommandConfig.LE_Connection_Update_
 import static com.revenco.library.command.AciCommandConfig.LE_Long_Term_Key_Request_Event_Sub_event_code;
 import static com.revenco.library.command.AciCommandConfig.LE_Read_Remote_Used_Features_Complete_Sub_event_code;
 import static com.revenco.library.command.AciCommandConfig.LE__Event_code_Group;
-import static com.revenco.library.core.Helper.ACTION_APP_CONNECT_STATUS;
-import static com.revenco.library.core.Helper.ACTION_REVEIVE_ATTRIBUTE_VALUES;
-import static com.revenco.library.core.Helper.ACTON_FLOWCONTROL_STATUS;
-import static com.revenco.library.core.Helper.CHAR_SET_SIZE;
-import static com.revenco.library.core.Helper.EXTRA_APPBEAN;
-import static com.revenco.library.core.Helper.EXTRA_APPMAC;
-import static com.revenco.library.core.Helper.EXTRA_CHAR_UUID;
-import static com.revenco.library.core.Helper.EXTRA_CHAR_VALUES;
-import static com.revenco.library.core.Helper.MSG_REMOVE_WAITING_TIMER;
-import static com.revenco.library.core.Helper.MSG_TEST_SEND_NOTIFY;
-import static com.revenco.library.core.Helper.charBeanSparseArray;
-import static com.revenco.library.core.Helper.currentHasConfig;
-import static com.revenco.library.others.ConfigProcess.config_mode;
-import static com.revenco.library.others.ConfigProcess.config_publicAddress;
 
 /**
  * <p> company:wanzhong</p>

@@ -11,8 +11,9 @@ import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
 
+import com.revenco.aidllibrary.CommonUtils.Helper;
+import com.revenco.aidllibrary.CommonUtils.XLog;
 import com.revenco.library.command.AciHciCommand;
-import com.revenco.library.utils.XLog;
 
 /**
  * company:wanzhong
@@ -103,7 +104,7 @@ public class PeripharalManager {
     /**
      * 测试
      */
-    public void testResetHW() throws Exception {
+    public void resetHW() throws Exception {
         start();
     }
 

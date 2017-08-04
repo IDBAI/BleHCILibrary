@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">BleHCILibrary</string>
+    <string name="app_name">HCI服务端</string>
+
 </resources>

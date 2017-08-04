@@ -8,8 +8,10 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/aidllibrary" />
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/ble-hcilibrary-peripheral" />
+            <option value="$PROJECT_DIR$/otherapp" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

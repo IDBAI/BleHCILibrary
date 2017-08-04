@@ -1,99 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.revenco.library.MainActivity">
+    android:background="#00000000"
+    >
 
-
-    <Button
-        android:id="@+id/HWReset"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginLeft="11dp"
-        android:layout_marginStart="11dp"
-        android:text="复位广播"/>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/HWReset"
-        android:focusable="false"
-        android:orientation="horizontal">
-
-        <EditText
-            android:id="@+id/appconnect"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_alignLeft="@+id/HWReset"
-            android:layout_alignParentBottom="true"
-            android:layout_alignStart="@+id/HWReset"
-            android:layout_below="@+id/HWReset"
-            android:layout_weight="1"
-            android:enabled="false"
-            android:text="Name"/>
-
-        <EditText
-            android:id="@+id/attrValues"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentTop="true"
-            android:layout_weight="2"
-            android:enabled="false"
-            android:text="Name"/>
-
-        <EditText
-            android:id="@+id/resettime"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentTop="true"
-            android:layout_weight="0.5"
-            android:enabled="false"
-            android:text="Name"/>
-    </LinearLayout>
-
-    <Button
-        android:id="@+id/Test"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_marginLeft="116dp"
-        android:layout_marginStart="116dp"
-        android:layout_toEndOf="@+id/HWReset"
-        android:layout_toRightOf="@+id/HWReset"
-        android:text="测试发送通知"
-        android:visibility="gone"/>
-
-
-    <TextView
-        android:id="@+id/beanconStatus"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:textColor="@color/colorPrimary"
-        android:textSize="20sp"
-        tools:text="广播成功"/>
-
-    <Button
-        android:id="@+id/clear"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_marginLeft="40dp"
-        android:layout_marginStart="40dp"
-        android:layout_toEndOf="@+id/Test"
-        android:layout_toRightOf="@+id/Test"
-        android:text="清屏"/>
 
 </RelativeLayout>

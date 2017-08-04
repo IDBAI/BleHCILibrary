@@ -1,8 +1,8 @@
 package com.revenco.library.command;
 
+import com.revenco.aidllibrary.CommonUtils.XLog;
 import com.revenco.library.core.PeripharalManager;
 import com.revenco.library.core.SerialPortListenTask;
-import com.revenco.library.utils.XLog;
 
 /**
  *

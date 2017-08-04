@@ -1,11 +1,11 @@
 package com.revenco.library.deals;
 
+import com.revenco.aidllibrary.CommonUtils.ConfigProcess;
+import com.revenco.aidllibrary.CommonUtils.FlowStatus;
+import com.revenco.aidllibrary.CommonUtils.Helper;
+import com.revenco.aidllibrary.CommonUtils.XLog;
+import com.revenco.aidllibrary.interfaces.FlowControlListener;
 import com.revenco.library.command.AciCommandConfig;
-import com.revenco.library.core.Helper;
-import com.revenco.library.interfaces.FlowControlListener;
-import com.revenco.library.others.ConfigProcess;
-import com.revenco.library.others.FlowStatus;
-import com.revenco.library.utils.XLog;
 
 import java.util.Arrays;
 

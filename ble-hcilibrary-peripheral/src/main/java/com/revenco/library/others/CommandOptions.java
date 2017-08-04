@@ -2,9 +2,9 @@ package com.revenco.library.others;
 
 import android.os.Handler;
 
+import com.revenco.aidllibrary.CommonUtils.ConvertUtil;
+import com.revenco.aidllibrary.CommonUtils.XLog;
 import com.revenco.library.command.OpCode;
-import com.revenco.library.utils.ConvertUtil;
-import com.revenco.library.utils.XLog;
 
 import java.util.ArrayList;
 import java.util.Arrays;
