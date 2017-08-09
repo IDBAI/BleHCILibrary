@@ -206,12 +206,6 @@ public class MainActivity extends AppCompatActivity {
         Tools.releaseWakeLock();
         if (receive != null)
             unregisterReceiver(receive);
-        if (HCIbinder != null)
-            try {
-                HCIbinder.destory();
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
         if (connect != null)
             unbindService(connect);
     }

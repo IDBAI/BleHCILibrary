@@ -30,6 +30,8 @@ public class Helper {
     public static final String EXTRA_CHAR_VALUES = "EXTRA_CHAR_VALUES";
     public static final int MSG_REMOVE_WAITING_TIMER = 1001;
     public static final int MSG_TEST_SEND_NOTIFY = 1002;
+    public static final int MSG_SEND_STATUS_RESET_INIT = 1003;
+    public static final int MSG_SEND_STATUS_TO_CLIENT = 1004;
     /**
      * 特征值集合
      */

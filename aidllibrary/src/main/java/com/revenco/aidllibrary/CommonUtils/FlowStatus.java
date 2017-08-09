@@ -10,6 +10,7 @@ import java.io.Serializable;
  * <p>CLASS_VERSION : 1.0.0</p>
  */
 public enum FlowStatus implements Serializable {
+    STATUS_NONE,
     STATUS_HWRESET_SUCCESS,
     STATUS_CONFIG_MODE_SUCCESS,
     STATUS_CONFIG_PUBADDR_SUCCESS,

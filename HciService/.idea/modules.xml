@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/../BleHCILibrary.iml" filepath="$PROJECT_DIR$/../BleHCILibrary.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../HciClient/HciClient.iml" filepath="$PROJECT_DIR$/../HciClient/HciClient.iml" />
+      <module fileurl="file://$PROJECT_DIR$/HciService.iml" filepath="$PROJECT_DIR$/HciService.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../aidllibrary/aidllibrary.iml" filepath="$PROJECT_DIR$/../aidllibrary/aidllibrary.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../ble-hcilibrary-peripheral/ble-hcilibrary-peripheral.iml" filepath="$PROJECT_DIR$/../ble-hcilibrary-peripheral/ble-hcilibrary-peripheral.iml" />
+    </modules>
+  </component>
+</project>

@@ -17,6 +17,7 @@ import com.revenco.aidllibrary.CommonUtils.ConfigProcess;
 import com.revenco.aidllibrary.CommonUtils.Constants;
 import com.revenco.aidllibrary.CommonUtils.ConvertUtil;
 import com.revenco.aidllibrary.CommonUtils.FlowStatus;
+import com.revenco.aidllibrary.CommonUtils.Helper;
 import com.revenco.aidllibrary.CommonUtils.Utils;
 import com.revenco.aidllibrary.CommonUtils.XLog;
 import com.revenco.aidllibrary.CommonUtils.byteUtils;
@@ -42,6 +43,7 @@ import java.util.HashMap;
 
 import static com.revenco.aidllibrary.CommonUtils.ConfigProcess.config_mode;
 import static com.revenco.aidllibrary.CommonUtils.ConfigProcess.config_publicAddress;
+import static com.revenco.aidllibrary.CommonUtils.FlowStatus.STATUS_RESETHW_INIT;
 import static com.revenco.aidllibrary.CommonUtils.Helper.ACTION_APP_CONNECT_STATUS;
 import static com.revenco.aidllibrary.CommonUtils.Helper.ACTION_REVEIVE_ATTRIBUTE_VALUES;
 import static com.revenco.aidllibrary.CommonUtils.Helper.ACTON_FLOWCONTROL_STATUS;
@@ -51,6 +53,7 @@ import static com.revenco.aidllibrary.CommonUtils.Helper.EXTRA_APPMAC;
 import static com.revenco.aidllibrary.CommonUtils.Helper.EXTRA_CHAR_UUID;
 import static com.revenco.aidllibrary.CommonUtils.Helper.EXTRA_CHAR_VALUES;
 import static com.revenco.aidllibrary.CommonUtils.Helper.MSG_REMOVE_WAITING_TIMER;
+import static com.revenco.aidllibrary.CommonUtils.Helper.MSG_SEND_STATUS_TO_CLIENT;
 import static com.revenco.aidllibrary.CommonUtils.Helper.MSG_TEST_SEND_NOTIFY;
 import static com.revenco.aidllibrary.CommonUtils.Helper.charBeanSparseArray;
 import static com.revenco.aidllibrary.CommonUtils.Helper.currentHasConfig;
@@ -92,7 +95,8 @@ public class PeripheralService extends Service implements SerialPortStatusDataLi
     /**
      * 是否在init进行中
      */
-    private static volatile boolean isIniting = false;
+    public static volatile boolean isIniting = false;
+    public static volatile FlowStatus CURRENT_STATUS = FlowStatus.STATUS_NONE;
     private int sendNotifyTime = 0;
     private Messenger messenger = new Messenger(new BLEHandler());
     private HashMap<byte[], byte[]> UUIDAttrValuesHashMap = new HashMap<>();
@@ -116,7 +120,7 @@ public class PeripheralService extends Service implements SerialPortStatusDataLi
                 case INIT_HW_WHAT:
                     isIniting = true;
                     XLog.e(TAG, "等待超过 " + INIT_HW_DELAY + " ms , reset HW !");
-                    PeripheralService.this.flowStatusChange(FlowStatus.STATUS_RESETHW_INIT);
+                    PeripheralService.this.flowStatusChange(STATUS_RESETHW_INIT);
                     break;
                 case APP_CONNECT_WHAT:
                     XLog.d(TAG, "时间到，断开连接！");
@@ -230,12 +234,12 @@ public class PeripheralService extends Service implements SerialPortStatusDataLi
                         } catch (Exception e) {
                             e.printStackTrace();
                             //此处一般越界,进行reset
-                            this.flowStatusChange(FlowStatus.STATUS_RESETHW_INIT);
+                            this.flowStatusChange(STATUS_RESETHW_INIT);
                         }
                         break;
                     } else if (i == data.length - 1) {
                         //遍历到最后一个，仍然不为0x04
-                        this.flowStatusChange(FlowStatus.STATUS_RESETHW_INIT);
+                        this.flowStatusChange(STATUS_RESETHW_INIT);
                     }
                 }
                 break;
@@ -392,7 +396,7 @@ public class PeripheralService extends Service implements SerialPortStatusDataLi
         data = FindPackage(currentOpCode, data);
         if (data == null) {
             XLog.e(TAG, "TODO: 2017/3/14 当做遇到严重错误，进行reset操作");
-            this.flowStatusChange(FlowStatus.STATUS_RESETHW_INIT);
+            this.flowStatusChange(STATUS_RESETHW_INIT);
             return;
         }
         //
@@ -457,7 +461,7 @@ public class PeripheralService extends Service implements SerialPortStatusDataLi
         } else {
             XLog.e(TAG, "error!check it!");
             //修复
-            this.flowStatusChange(FlowStatus.STATUS_RESETHW_INIT);
+            this.flowStatusChange(STATUS_RESETHW_INIT);
         }
     }
 
@@ -469,6 +473,7 @@ public class PeripheralService extends Service implements SerialPortStatusDataLi
      */
     @Override
     public void flowStatusChange(FlowStatus status, byte[]... datas) {
+        CURRENT_STATUS = status;
         switch (status) {
             case STATUS_HWRESET_SUCCESS://2 reset 成功
                 XLog.d(TAG, "1 reset 成功");
@@ -598,6 +603,14 @@ public class PeripheralService extends Service implements SerialPortStatusDataLi
                 }
                 break;
         }
+        sendCurrentBleStatus(status);
+    }
+
+    /**
+     * 发送蓝牙的当前状态
+     * @param status
+     */
+    private void sendCurrentBleStatus(FlowStatus status) {
         Intent intent = new Intent(ACTON_FLOWCONTROL_STATUS);
         intent.putExtra(Constants.ACTON_FLOWCONTROL_STATUS_VALUES, status);
         sendBroadcast(intent);
@@ -853,6 +866,12 @@ public class PeripheralService extends Service implements SerialPortStatusDataLi
                     break;
                 case MSG_TEST_SEND_NOTIFY:
                     verifyCertificate(Config.CHAR_NOTIFY_STATUS_SUCCESS_VALUE, Config.SUCCESS_REASON);
+                    break;
+                case Helper.MSG_SEND_STATUS_RESET_INIT:
+                    flowStatusChange(STATUS_RESETHW_INIT);
+                    break;
+                case MSG_SEND_STATUS_TO_CLIENT:
+                    sendCurrentBleStatus(CURRENT_STATUS);
                     break;
             }
         }

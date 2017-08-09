@@ -4,7 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/BleHCILibrary.iml" filepath="$PROJECT_DIR$/BleHCILibrary.iml" />
       <module fileurl="file://$PROJECT_DIR$/HciClient/HciClient.iml" filepath="$PROJECT_DIR$/HciClient/HciClient.iml" />
-      <module fileurl="file://$PROJECT_DIR$/HciService/HCIService.iml" filepath="$PROJECT_DIR$/HciService/HCIService.iml" />
+      <module fileurl="file://$PROJECT_DIR$/HciService/HciService.iml" filepath="$PROJECT_DIR$/HciService/HciService.iml" />
       <module fileurl="file://$PROJECT_DIR$/aidllibrary/aidllibrary.iml" filepath="$PROJECT_DIR$/aidllibrary/aidllibrary.iml" />
       <module fileurl="file://$PROJECT_DIR$/ble-hcilibrary-peripheral/ble-hcilibrary-peripheral.iml" filepath="$PROJECT_DIR$/ble-hcilibrary-peripheral/ble-hcilibrary-peripheral.iml" />
     </modules>

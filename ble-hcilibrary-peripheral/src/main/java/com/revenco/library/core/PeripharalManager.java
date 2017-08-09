@@ -11,9 +11,12 @@ import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
 
+import com.revenco.aidllibrary.CommonUtils.FlowStatus;
 import com.revenco.aidllibrary.CommonUtils.Helper;
 import com.revenco.aidllibrary.CommonUtils.XLog;
-import com.revenco.library.command.AciHciCommand;
+
+import static com.revenco.aidllibrary.CommonUtils.Helper.MSG_SEND_STATUS_TO_CLIENT;
+import static com.revenco.library.core.PeripheralService.CURRENT_STATUS;
 
 /**
  * company:wanzhong
@@ -53,8 +56,6 @@ public class PeripharalManager {
         @Override
         public void onServiceDisconnected(ComponentName name) {
             XLog.e(TAG, "onServiceDisconnected!");
-            if (listenTask != null)
-                listenTask.stoplistener();
             messenger = null;
             start(context);
         }
@@ -85,6 +86,12 @@ public class PeripharalManager {
     }
 
     public void start(Context context) {
+        //发送当前蓝牙状态给客户端
+        sendMsg2Service(MSG_SEND_STATUS_TO_CLIENT);
+        if (PeripheralService.isIniting || FlowStatus.STATUS_ACI_GAP_SET_DISCOVERABLE_SUCCESS == CURRENT_STATUS) {
+            System.out.println("初始化中 或者 蓝牙已经开启！");
+            return;
+        }
         this.context = context;
         //1 初始化串口监听
         listenTask = new SerialPortListenTask(context);
@@ -113,7 +120,7 @@ public class PeripharalManager {
         if (SERVICE_UUID == null && BLE_PUBLIC_MAC_ADDRESS == null) {
             throw new Exception("must call setServiceUuid and setBlePublicMacAddress first!");
         }
-        AciHciCommand.bleHwReset(listenTask);
+        sendMsg2Service(Helper.MSG_SEND_STATUS_RESET_INIT);
     }
 
     //--------------------------command control----------------start
