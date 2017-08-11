@@ -59,11 +59,6 @@ public class Config {
      * 硬编码--通知开门失败 状态
      */
     public static final byte CHAR_NOTIFY_STATUS_FAILED_VALUE = (byte) 0xFF;
-    /**
-     * REASON——
-     */
-    public static final byte SUCCESS_REASON = 0x00;
-
     ////------------以前的uuid
 //    // D973F2E1-B19E-11E2-9E96-0800200C9A66
 //    // D973F2E2-B19E-11E2-9E96-0800200C9A66

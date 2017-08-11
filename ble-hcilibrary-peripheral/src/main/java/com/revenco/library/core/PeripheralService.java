@@ -1,12 +1,13 @@
 package com.revenco.library.core;
 
+import android.annotation.TargetApi;
 import android.app.Service;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
-import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.SparseArray;
 
@@ -21,8 +22,10 @@ import com.revenco.aidllibrary.CommonUtils.Helper;
 import com.revenco.aidllibrary.CommonUtils.Utils;
 import com.revenco.aidllibrary.CommonUtils.XLog;
 import com.revenco.aidllibrary.CommonUtils.byteUtils;
+import com.revenco.aidllibrary.MasterHelper;
 import com.revenco.aidllibrary.interfaces.FlowControlListener;
 import com.revenco.aidllibrary.interfaces.SerialPortStatusDataListener;
+import com.revenco.certificateverifylib.core.SignVerify;
 import com.revenco.library.command.AciCommandConfig;
 import com.revenco.library.command.AciGapCommand;
 import com.revenco.library.command.AciGattCommand;
@@ -37,6 +40,7 @@ import com.revenco.library.others.AttrOrder;
 import com.revenco.library.others.CommandOptions;
 import com.revenco.library.others.Config;
 
+import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -53,10 +57,10 @@ import static com.revenco.aidllibrary.CommonUtils.Helper.EXTRA_APPMAC;
 import static com.revenco.aidllibrary.CommonUtils.Helper.EXTRA_CHAR_UUID;
 import static com.revenco.aidllibrary.CommonUtils.Helper.EXTRA_CHAR_VALUES;
 import static com.revenco.aidllibrary.CommonUtils.Helper.MSG_REMOVE_WAITING_TIMER;
-import static com.revenco.aidllibrary.CommonUtils.Helper.MSG_SEND_STATUS_TO_CLIENT;
 import static com.revenco.aidllibrary.CommonUtils.Helper.MSG_TEST_SEND_NOTIFY;
 import static com.revenco.aidllibrary.CommonUtils.Helper.charBeanSparseArray;
 import static com.revenco.aidllibrary.CommonUtils.Helper.currentHasConfig;
+import static com.revenco.certificateverifylib.core.SignVerify.openDoorStatus.VerifySuccess;
 import static com.revenco.library.command.AciCommandConfig.Command_Complete_Event;
 import static com.revenco.library.command.AciCommandConfig.Command_Status_Event;
 import static com.revenco.library.command.AciCommandConfig.Disconnect_Complete;
@@ -75,6 +79,7 @@ import static com.revenco.library.command.AciCommandConfig.LE__Event_code_Group;
  * <p> class describe: BLE外围数据提供，事件解析等服务，由 PeripharalManager 所管理</p>
  * <p> class_version: 1.0.0</p>
  */
+@TargetApi(Build.VERSION_CODES.CUPCAKE)
 public class PeripheralService extends Service implements SerialPortStatusDataListener, FlowControlListener {
     private static final String TAG = "PeripheralService";
     private static final byte WRITE_PROPERTIES = CharacteristicProperty.PROPERTY_WRITE | CharacteristicProperty.PROPERTY_WRITE_NO_RESPONSE;
@@ -150,7 +155,6 @@ public class PeripheralService extends Service implements SerialPortStatusDataLi
     public void onStatusChange(String devices, int status) {
     }
 
-    @Nullable
     @Override
     public IBinder onBind(Intent intent) {
         XLog.d(TAG, "onBind() called with: intent = [" + intent + "]");
@@ -608,6 +612,7 @@ public class PeripheralService extends Service implements SerialPortStatusDataLi
 
     /**
      * 发送蓝牙的当前状态
+     *
      * @param status
      */
     private void sendCurrentBleStatus(FlowStatus status) {
@@ -692,8 +697,9 @@ public class PeripheralService extends Service implements SerialPortStatusDataLi
             //debug();
             //最后一个
             if (Arrays.equals(keyuuid, Config.CHAR_UUID_WRITE_06)) {
-                if (mergeCertificate()) {
-                    verifyCerticate();
+                byte[] bytes = mergeCertificate();
+                if (bytes != null) {
+                    verifyCerticate(bytes);
                 }
             }
         } else {
@@ -703,23 +709,39 @@ public class PeripheralService extends Service implements SerialPortStatusDataLi
 
     /**
      * 校验证书
+     *
+     * @param bytes 证书数据
      */
-    private void verifyCerticate() {
-        if (true) {
-            //TODO 校验成功，发送 notify
-            XLog.d(TAG, "模拟证书校验100ms");
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            XLog.d(TAG, "TODO 校验成功，发送 notify");
-            this.verifyCertificate(Config.CHAR_NOTIFY_STATUS_SUCCESS_VALUE, Config.SUCCESS_REASON);
-            UUIDAttrValuesHashMap.clear();
-        } else {
-            //TODO 开门失败 发送 notify
-            XLog.d(TAG, "TODO 开门失败 发送 notify");
+    private void verifyCerticate(byte[] bytes) {
+        PublicKey publicKey = null;
+        String deviceId = null;
+        String userId = null;
+        SignVerify.openDoorStatus verify = SignVerify.verify(this.getApplicationContext(), publicKey, bytes, lastConnectAppmac, deviceId, userId);
+        switch (verify) {
+            case VerifySuccess:
+                sendResultNotify(Config.CHAR_NOTIFY_STATUS_SUCCESS_VALUE, VerifySuccess.getReson());
+                sendBroadcast(new Intent(Helper.ACTION_CERTIFICATE_VERIFY_SUCCESS));
+                XLog.d(TAG, "TODO 校验成功，发送 notify");
+                break;
+            default:
+                sendResultNotify(Config.CHAR_NOTIFY_STATUS_FAILED_VALUE, verify.getReson());
+                Intent intent = new Intent(Helper.ACTION_CERTIFICATE_VERIFY_FAILED);
+                intent.putExtra(Helper.EXTRA_CERTIFICATE_VERIFY_FAILED_REASON, verify.getReson());
+                sendBroadcast(intent);
+                XLog.d(TAG, "TODO 校验失败，发送 notify -> " + MasterHelper.ParseError(verify.getReson()));
+                break;
         }
+    }
+
+    /**
+     * 发送开门校验结果
+     *
+     * @param charNotifyStatus
+     * @param Reason
+     */
+    private void sendResultNotify(byte charNotifyStatus, byte Reason) {
+        this.verifyCertificate(charNotifyStatus, Reason);
+        UUIDAttrValuesHashMap.clear();
     }
 
     /**
@@ -727,8 +749,9 @@ public class PeripheralService extends Service implements SerialPortStatusDataLi
      *
      * @return
      */
-    private boolean mergeCertificate() {
+    private byte[] mergeCertificate() {
         XLog.d(TAG, "mergeCertificate() called");
+        byte[] destbytes = null;
         byte[] temp = new byte[220];
         int totallen = 0;
         byte[] values;
@@ -743,12 +766,12 @@ public class PeripheralService extends Service implements SerialPortStatusDataLi
             }
         }
         if (totallen > 0) {
-            byte[] destbytes = new byte[totallen];
+            destbytes = new byte[totallen];
             System.arraycopy(temp, 0, destbytes, 0, totallen);
             XLog.d(TAG, "证书数据：" + ConvertUtil.byte2HexStrWithSpace(destbytes));
-            return true;
+            return destbytes;
         } else
-            return false;
+            return destbytes;
     }
 
     private void initHashMap(String currentAppMac) {
@@ -865,12 +888,12 @@ public class PeripheralService extends Service implements SerialPortStatusDataLi
                     removeWaitingResetHWTimer();
                     break;
                 case MSG_TEST_SEND_NOTIFY:
-                    verifyCertificate(Config.CHAR_NOTIFY_STATUS_SUCCESS_VALUE, Config.SUCCESS_REASON);
+                    verifyCertificate(Config.CHAR_NOTIFY_STATUS_SUCCESS_VALUE, VerifySuccess.getReson());
                     break;
                 case Helper.MSG_SEND_STATUS_RESET_INIT:
                     flowStatusChange(STATUS_RESETHW_INIT);
                     break;
-                case MSG_SEND_STATUS_TO_CLIENT:
+                case Helper.MSG_SEND_STATUS_TO_CLIENT:
                     sendCurrentBleStatus(CURRENT_STATUS);
                     break;
             }

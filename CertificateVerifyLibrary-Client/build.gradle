@@ -1,0 +1,115 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 25
+    buildToolsVersion "25.0.2"
+
+    defaultConfig {
+        minSdkVersion 17
+        targetSdkVersion 25
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+    }
+    lintOptions {
+        abortOnError false
+    }
+
+
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    dexOptions {
+        incremental true
+    }
+}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    compile 'com.android.support:appcompat-v7:25.3.1'
+    testCompile 'junit:junit:4.12'
+    //Spongy Castle artifacts are published on Maven Central.
+    // Use Gradle or the android-maven-plugin
+    // to make the most of this, or click the jar
+    // links below - make sure you include all dependencies:
+    // http://rtyley.github.io/spongycastle/
+    //    compile 'com.madgag.spongycastle:prov:1.54.0.0'
+    //    compile 'com.madgag.spongycastle:pkix:1.54.0.0'
+    //    compile 'com.madgag.spongycastle:pg:1.54.0.0'
+    //    compile 'com.madgag.spongycastle:core:1.54.0.0'
+}
+
+//方案1，懒人打包,结果会包含很多无用文件，如buildconfig.class等等
+task makeJar1(type: Copy, dependsOn: ['build']) {
+    delete 'build/libs/ecdsalib.jar'
+    from('build/intermediates/bundles/release/')
+    into('build/libs/')
+    include('classes.jar')
+    rename('classes.jar', 'ecdsaLib.jar')
+}
+
+//方案2 ，自定义打包,指定class做jar操作
+task makeJar2(type: Jar, dependsOn: ['build']) {
+    archiveName = 'ecdsaLib.jar'//内置变量赋值-目标jar包名字
+    delete 'build/libs/ecdsalib.jar'
+    from('build/intermediates/classes/release')
+    destinationDir = file('build/libs')//内置变量赋值-目标文件夹
+    //排除掉无用的文件
+    exclude('com/revenco/certificateverifylib/BuildConfig.class')
+    exclude('com/revenco/certificateverifylib/BuildConfig\$*.class')
+    exclude('**/R.class')
+    exclude('**/R\$*.class')
+    //包含有用的文件
+    include('com/revenco/certificateverifylib/**/*.class')
+}
+
+//方案3，打包第三方依赖加载进来
+task makeJar3(type: Jar, dependsOn: ['build']) {
+    archiveName = 'CerVerifyLibrary-Client-2.0.0.jar'//内置变量赋值-目标jar包名字
+    delete 'build/libs'
+    from('build/intermediates/classes/release')
+    //第三方-以jar包形式添加进来的
+    from(project.zipTree('libs/core-1.54.0.0.jar'))
+    from(project.zipTree('libs/pg-1.54.0.0.jar'))
+    from(project.zipTree('libs/pkix-1.54.0.0.jar'))
+    from(project.zipTree('libs/prov-1.54.0.0.jar'))
+
+    destinationDir = file('build/libs')//内置变量赋值-目标文件夹
+
+    //排除掉无用的文件
+    exclude('com/revenco/certificateverifylib/BuildConfig.class')
+    exclude('com/revenco/certificateverifylib/BuildConfig\$*.class')
+    exclude('**/R.class')
+    exclude('**/R\$*.class')
+
+    //包含有用的文件
+    include('com/revenco/certificateverifylib/**/*.class')
+    //第三方
+    include('org/bouncycastle/**/*.class')
+    include('org/spongycastle/**/*.class')
+}
+
+//混淆打包jar
+def androidSDKDir = plugins.getPlugin('com.android.library').sdkHandler.getSdkFolder()
+def androidJarDir = androidSDKDir.toString() + '/platforms/' + "${android.compileSdkVersion}" + '/android.jar'
+
+task makeJarWithPro(type: proguard.gradle.ProGuardTask, dependsOn: ['makeJar3']) {
+    injars('build/libs/certificateverifylib-1.0.0.jar')
+    outjars('build/libs/certificateverifylib-pro-1.0.0.jar')
+    libraryjars(androidJarDir)
+    configuration 'proguard-rules.pro'
+}
+
+
+
+
+

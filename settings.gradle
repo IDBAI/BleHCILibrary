@@ -1,1 +1,1 @@
-include ':HciService', ':ble-hcilibrary-peripheral', ':aidllibrary', ':HciClient'
+include ':HciService', ':ble-hcilibrary-peripheral',  ':CertificateVerifyLibrary-Client'

@@ -15,7 +15,6 @@ import com.revenco.aidllibrary.CommonUtils.FlowStatus;
 import com.revenco.aidllibrary.CommonUtils.Helper;
 import com.revenco.aidllibrary.CommonUtils.XLog;
 
-import static com.revenco.aidllibrary.CommonUtils.Helper.MSG_SEND_STATUS_TO_CLIENT;
 import static com.revenco.library.core.PeripheralService.CURRENT_STATUS;
 
 /**
@@ -87,7 +86,7 @@ public class PeripharalManager {
 
     public void start(Context context) {
         //发送当前蓝牙状态给客户端
-        sendMsg2Service(MSG_SEND_STATUS_TO_CLIENT);
+        sendMsg2Service(Helper.MSG_SEND_STATUS_TO_CLIENT);
         if (PeripheralService.isIniting || FlowStatus.STATUS_ACI_GAP_SET_DISCOVERABLE_SUCCESS == CURRENT_STATUS) {
             System.out.println("初始化中 或者 蓝牙已经开启！");
             return;

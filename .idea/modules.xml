@@ -3,9 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/BleHCILibrary.iml" filepath="$PROJECT_DIR$/BleHCILibrary.iml" />
-      <module fileurl="file://$PROJECT_DIR$/HciClient/HciClient.iml" filepath="$PROJECT_DIR$/HciClient/HciClient.iml" />
+      <module fileurl="file://$PROJECT_DIR$/CertificateVerifyLibrary-Client/CertificateVerifyLibrary-Client.iml" filepath="$PROJECT_DIR$/CertificateVerifyLibrary-Client/CertificateVerifyLibrary-Client.iml" />
       <module fileurl="file://$PROJECT_DIR$/HciService/HciService.iml" filepath="$PROJECT_DIR$/HciService/HciService.iml" />
-      <module fileurl="file://$PROJECT_DIR$/aidllibrary/aidllibrary.iml" filepath="$PROJECT_DIR$/aidllibrary/aidllibrary.iml" />
       <module fileurl="file://$PROJECT_DIR$/ble-hcilibrary-peripheral/ble-hcilibrary-peripheral.iml" filepath="$PROJECT_DIR$/ble-hcilibrary-peripheral/ble-hcilibrary-peripheral.iml" />
     </modules>
   </component>

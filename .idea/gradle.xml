@@ -5,12 +5,12 @@
       <GradleProjectSettings>
         <option name="distributionType" value="DEFAULT_WRAPPED" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="gradleHome" value="D:/Program Files/gradle/gradle-3.1" />
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/HciClient" />
+            <option value="$PROJECT_DIR$/CertificateVerifyLibrary-Client" />
             <option value="$PROJECT_DIR$/HciService" />
-            <option value="$PROJECT_DIR$/aidllibrary" />
             <option value="$PROJECT_DIR$/ble-hcilibrary-peripheral" />
           </set>
         </option>

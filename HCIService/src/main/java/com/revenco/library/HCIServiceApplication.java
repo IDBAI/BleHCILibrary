@@ -2,7 +2,6 @@ package com.revenco.library;
 
 import android.app.Application;
 
-import com.revenco.aidllibrary.CommonUtils.XLog;
 import com.revenco.library.core.PeripharalManager;
 
 /**
@@ -29,7 +28,6 @@ public class HCIServiceApplication extends Application {
 
     @Override
     public void onCreate() {
-        XLog.d(TAG, "onCreate() called");
         super.onCreate();
         try {
             PeripharalManager.getInstance().setBlePublicMacAddress(BLE_PUBLIC_MAC_ADDRESS);
