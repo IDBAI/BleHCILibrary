@@ -653,13 +653,14 @@ public class PeripheralService extends Service implements SerialPortStatusDataLi
         String uuid_str = ConvertUtil.byte2HexStrWithSpace(char_uuid);
         String values_str = ConvertUtil.byte2HexStrWithSpace(values);
         String textstr = "appBleMac : " + appBleMac + "\n" + "uuid : " + uuid_str + "\n" + "vaules : " + values_str;
-        XLog.d(TAG, textstr);
-        fillMap(appBleMac, char_uuid, values);
         Intent intent = new Intent(ACTION_REVEIVE_ATTRIBUTE_VALUES);
         intent.putExtra(EXTRA_APPMAC, appBleMac);
         intent.putExtra(EXTRA_CHAR_UUID, char_uuid);
         intent.putExtra(EXTRA_CHAR_VALUES, values);
         sendBroadcast(intent);
+        XLog.d(TAG, textstr);
+        //填充证书
+        fillMap(appBleMac, char_uuid, values);
     }
 
     @Override
@@ -698,9 +699,7 @@ public class PeripheralService extends Service implements SerialPortStatusDataLi
             //最后一个
             if (Arrays.equals(keyuuid, Config.CHAR_UUID_WRITE_06)) {
                 byte[] bytes = mergeCertificate();
-                if (bytes != null) {
-                    verifyCerticate(bytes);
-                }
+                verifyCerticate(bytes);
             }
         } else {
             XLog.e(TAG, "app mac 不一致！");
@@ -716,7 +715,9 @@ public class PeripheralService extends Service implements SerialPortStatusDataLi
         PublicKey publicKey = null;
         String deviceId = null;
         String userId = null;
-        SignVerify.openDoorStatus verify = SignVerify.verify(this.getApplicationContext(), publicKey, bytes, lastConnectAppmac, deviceId, userId);
+        //TODO 校验证书
+//        SignVerify.openDoorStatus verify = SignVerify.verify(this.getApplicationContext(), publicKey, bytes, lastConnectAppmac, deviceId, userId);
+        SignVerify.openDoorStatus verify = SignVerify.openDoorStatus.VerifySuccess;
         switch (verify) {
             case VerifySuccess:
                 sendResultNotify(Config.CHAR_NOTIFY_STATUS_SUCCESS_VALUE, VerifySuccess.getReson());
@@ -751,9 +752,9 @@ public class PeripheralService extends Service implements SerialPortStatusDataLi
      */
     private byte[] mergeCertificate() {
         XLog.d(TAG, "mergeCertificate() called");
-        byte[] destbytes = null;
-        byte[] temp = new byte[220];
         int totallen = 0;
+        byte[] destbytes = new byte[totallen];
+        byte[] temp = new byte[220];
         byte[] values;
         for (byte[] uuid : uuidlist) {
             values = UUIDAttrValuesHashMap.get(uuid);
